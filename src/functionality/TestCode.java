@@ -30,7 +30,7 @@ public class TestCode {
 		
 		String WARCResponseString = "WARC-Type: response";
 		String RegexRecordEnd = "Connection: close";
-		 String regexblank = "^\\s";
+		String regexblank = "^\\s";
 		
 		Pattern WARCResponsePattern = Pattern.compile(WARCResponseString);
 		BufferedReader reader = new BufferedReader(new FileReader(file));
