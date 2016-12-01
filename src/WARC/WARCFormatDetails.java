@@ -1,5 +1,7 @@
 package WARC;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.*;
 
 public interface WARCFormatDetails {
@@ -9,7 +11,42 @@ public interface WARCFormatDetails {
 	
 	
 	
-	String regexblank = "^\\s";
+	String REGEX_BLANK = "^\\s";
+	String FULL_LINE = "(.|\n)+)";
+	String Look_Behind_One = "(?<=";
+	String LOOK_BEHIND_TWO = "\\s)";
+	
+	
+	/*
+	String WARC_Type = "WARC-Type";
+	String WARC_Date = "WARC-Date";
+	String WARC_ID = "WARC-Record-ID";
+	String WARC_Content_Length = "Content-Length";
+	String WARC_Content_Type
+	String WARC_Concurrent-To
+	String WARC_Block_Digest
+	String WARC_Payload
+	String WARC_IP
+	String WARC_Refers_to
+	String WARC_Target_URI
+	String WARC_Truncated
+	String WARC_warcinfo_ID
+	String WARC_Filename
+	String
+	*/
+	
+	
+	
+	List Lookbehind = new ArrayList<String>();
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	//Responses are only relevant to this project
 	enum WARCType{
@@ -43,6 +80,16 @@ public interface WARCFormatDetails {
 			"WARC-Identified-Payload-Type"
 			
 	};
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 		
 	
 

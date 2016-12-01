@@ -1,15 +1,21 @@
 package WARC;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.sun.javafx.collections.MappingChange.Map;
 
 public class WARCRecord implements WARCFormatDetails {
 	
 
-	protected String type;
+	protected WARCType type;
 	protected int ContentLength;
 	protected String TargetURI;
-	protected List ContentBlock;
+	protected List ContentBlock; //To hold unordered
+	protected Map<String, String> Headers;
+
+	
 	
 	//Need to get Content block
 
@@ -17,25 +23,23 @@ public class WARCRecord implements WARCFormatDetails {
 	
 	//blank constructor
 	public WARCRecord(){
-		
+
 		
 	}
 	
 	
 	public WARCRecord(InputStream in){
+
+		
+		//Not sure how to organise ContentBlock
+		//No consistent pattern 
+		ContentBlock = new ArrayList<String>();
+		
+		
+		
 		
 	}
 	
-
-	public String getType() {
-		return type;
-	}
-
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 
 	public int getContentLength() {
 		return ContentLength;

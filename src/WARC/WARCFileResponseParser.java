@@ -1,7 +1,10 @@
 package WARC;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /* Class to Read a specific WARC File 
@@ -27,6 +30,32 @@ public class WARCFileResponseParser implements WARCFormatDetails{
 		
 	}
 	
+	
+	public void ParseWARCResponses(FileInputStream in){
+		
+		WARCResponsePattern = Pattern.compile(WARCResponseString);
+		reader = new BufferedReader(new InputStreamReader(in));
+		
+		String currentLine;
+		String nextLine;
+		
+		try {
+			while((currentLine = reader.readLine())!= null){
+				Matcher ResponseMatch = WARCResponsePattern.matcher(currentLine);
+				
+				if(ResponseMatch.find()){
+					//TODO: BUILD WARC Record File of type Response
+				}
+				
+			}
+			
+		}
+		catch(Exception e)
+		{}
+		
+		
+		
+	}
 	
 
 }
