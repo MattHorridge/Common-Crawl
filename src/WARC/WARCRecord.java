@@ -3,8 +3,10 @@ package WARC;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
-import com.sun.javafx.collections.MappingChange.Map;
+
 
 public class WARCRecord implements WARCFormatDetails {
 	
@@ -23,20 +25,23 @@ public class WARCRecord implements WARCFormatDetails {
 	
 	//blank constructor
 	public WARCRecord(){
-
+		
+		//Not sure how to organise ContentBlock
+		//No consistent pattern 
+		ContentBlock = new ArrayList<String>();
+		Headers = new HashMap<String, String>();
+		
+		
+		
 		
 	}
 	
 	
 	public WARCRecord(InputStream in){
 
-		
 		//Not sure how to organise ContentBlock
 		//No consistent pattern 
 		ContentBlock = new ArrayList<String>();
-		
-		
-		
 		
 	}
 	

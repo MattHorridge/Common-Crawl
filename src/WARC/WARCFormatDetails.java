@@ -11,19 +11,24 @@ public interface WARCFormatDetails {
 	
 	
 	
-	String REGEX_BLANK = "^\\s";
-	String FULL_LINE = "(.|\n)+)";
-	String Look_Behind_One = "(?<=";
-	String LOOK_BEHIND_TWO = "\\s)";
+	final String REGEX_BLANK = "^\\s";
+	final String FULL_LINE = "(.|\n)+)";
+	final String LOOK_BEHIND_ONE = "(?<=";
+	final String LOOK_BEHIND_TWO = "\\s)";
+	final String REGEX_RECORD_END = "Connection: close";
 	
 	
-	/*
-	String WARC_Type = "WARC-Type";
-	String WARC_Date = "WARC-Date";
+	
+	
+	
+	final String WARC_TYPE = "WARC-Type";
+	String WARC_DATE = "WARC-Date";
 	String WARC_ID = "WARC-Record-ID";
-	String WARC_Content_Length = "Content-Length";
-	String WARC_Content_Type
-	String WARC_Concurrent-To
+	String WARC_CONTENT_LENGTH = "Content-Length";
+	String WARC_CONTENT_TYPE = "Content-Type";
+	//String WARC_Concurrent-To
+	/*
+	
 	String WARC_Block_Digest
 	String WARC_Payload
 	String WARC_IP
@@ -35,19 +40,15 @@ public interface WARCFormatDetails {
 	String
 	*/
 	
+	final Pattern WARC_DATE_PATTERN = Pattern.compile(WARC_DATE);
+	
 	
 	
 	List Lookbehind = new ArrayList<String>();
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
+
 	//Responses are only relevant to this project
 	enum WARCType{
 		warcinfo,
