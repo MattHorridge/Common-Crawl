@@ -4,6 +4,7 @@ package functionality;
 import org.apache.commons.*;
 
 import WARC.WARCFormatDetails;
+import WARC.WARCRecord;
 import WARC.WARCRecordBuilder;
 
 import java.io.InputStream;
@@ -25,9 +26,9 @@ public class CommonCrawlReaderTest {
 		
 		WARCRecordBuilder rest = new WARCRecordBuilder(f);
 		
+		WARCRecord test = rest.buildRecord("response");
 		
-		
-		rest.buildRecord("response");
+		System.out.println(test.getHeaders());
 		
 	}
 	

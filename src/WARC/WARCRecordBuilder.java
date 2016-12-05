@@ -7,7 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,11 +32,11 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	private File file;
 	private InputStream in;
 	private BufferedReader reader;
-	private Pattern WARCPattern;
+	private Pattern WARCTypePattern;
 	private String TypeString;
 	private Matcher TypeMatch;
-	
-	
+	private List HeaderList;
+
 	
 	/**
 	 * Constructor
@@ -50,9 +53,11 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	public WARCRecordBuilder(File fileIn) throws FileNotFoundException{
 		
 		file = fileIn;
-		
 		in = new FileInputStream(fileIn);
 		reader = new BufferedReader(new InputStreamReader(in));
+		HeaderList = new ArrayList<String>(Arrays.asList(HeaderFields));
+		
+		
 	}
 	
 	
@@ -75,51 +80,58 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 		String currentLine;
 		String nextLine;
 		TypeString = WARC_TYPE + ": " + type;
-		WARCPattern = Pattern.compile(TypeString); //This what the reader looks for
+		System.out.println(TypeString);
+		WARCTypePattern = Pattern.compile(TypeString); //This what the reader looks for
+		WARCRecord Record = new WARCRecord();
+		Map<String, String> RecordHeaders = new HashMap<String, String>();
+		List ContentBlock = new ArrayList<String>();
 		
 		
 		try{
 			while((currentLine = reader.readLine())!= null){
-				TypeMatch = WARCPattern.matcher(currentLine);
+				TypeMatch = WARCTypePattern.matcher(currentLine);
 				
+				//If there is a WARC Record of type required
 				if(TypeMatch.find()){
 					//TODO: CREATE NEW WARCRecord
 				
 					while(!(nextLine = reader.readLine()).trim().equals(REGEX_RECORD_END)){
 						
 						
-						String lookbehindtest = "(?<=WARC-Date:\\s)((.|\n)+)";
-						Pattern lookb = Pattern.compile(lookbehindtest);
-						Matcher matchytest = lookb.matcher(nextLine);
-						
-						
-						//for (int i = 0; i <= 15; i++){
-							if(matchytest.find()){
-								System.out.println(matchytest.group());
-							//}
+						//STORE IN MAP IN WARC RECORD
+								
+							//REGEX_WARC
+							//REGEX_WARC_PATTERN
 							
-						}
+							Matcher PatternMatcher = WARC_MATCH_PATTERN.matcher(nextLine);
+							Matcher CTypeMatcher = WARC_CONTENT_TYPE_PATTERN.matcher(nextLine);
+							Matcher CLengthMatcher = WARC_CONTENT_LENGTH_PATTERN.matcher(nextLine);
+							
+							
+							
+							
+							if (PatternMatcher.find()){
+								RecordHeaders.put(PatternMatcher.group(1), PatternMatcher.group(2));	
+							}
+							else if (CTypeMatcher.find()){
+								RecordHeaders.put(CTypeMatcher.group(1), CTypeMatcher.group(2));;
+							}
+							else if (CLengthMatcher.find()){
+								RecordHeaders.put(CLengthMatcher.group(1), CLengthMatcher.group(2));
+							}
 						
-					
 					}	
-					
-					
-					
 				}
-				
 			}
-			
-			
+		}
+		catch(Exception e)
+		{			
 		}
 		
-		catch(Exception e){}
 		
+		Record.setHeaders(RecordHeaders);
 		
-		
-		
-		
-		
-		return null;
+		return Record;
 	}
 
 

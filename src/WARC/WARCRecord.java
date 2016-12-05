@@ -31,12 +31,34 @@ public class WARCRecord implements WARCFormatDetails {
 		ContentBlock = new ArrayList<String>();
 		Headers = new HashMap<String, String>();
 		
-		
-		
-		
 	}
 	
 	
+	public WARCType getType() {
+		return type;
+	}
+
+
+	public void setType(WARCType type) {
+		this.type = type;
+	}
+
+
+	public Map<String, String> getHeaders() {
+		return Headers;
+	}
+
+
+	public void setHeaders(Map<String, String> headers) {
+		Headers = headers;
+	}
+
+
+	public void setContentBlock(List contentBlock) {
+		ContentBlock = contentBlock;
+	}
+
+
 	public WARCRecord(InputStream in){
 
 		//Not sure how to organise ContentBlock

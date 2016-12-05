@@ -11,41 +11,46 @@ public interface WARCFormatDetails {
 	
 	
 	
+	
+	
+	
+	//Regex strings
 	final String REGEX_BLANK = "^\\s";
-	final String FULL_LINE = "(.|\n)+)";
-	final String LOOK_BEHIND_ONE = "(?<=";
-	final String LOOK_BEHIND_TWO = "\\s)";
 	final String REGEX_RECORD_END = "Connection: close";
+	final String REGEX_WARC = "(WARC.{0,20}:\\s)((.|\n)+)";
+	final String REGEX_CONTENT_TYPE = "(Content-Type.{0,20}:\\s)((.|\n)+)";
+	final String REGEX_CONTENT_LENGTH = "(Content-Length.{0,20}:\\s)((.|\n)+)";
 	
 	
+	//Compiled Regex Patterns
+	final Pattern WARC_MATCH_PATTERN = Pattern.compile(REGEX_WARC);
+	final Pattern WARC_CONTENT_TYPE_PATTERN = Pattern.compile(REGEX_CONTENT_TYPE);
+	final Pattern WARC_CONTENT_LENGTH_PATTERN = Pattern.compile(REGEX_CONTENT_LENGTH);
+	final Pattern REGEX_BLANK_PATTERN = Pattern.compile(REGEX_BLANK);
+
 	
 	
-	
+	//Header Fields
 	final String WARC_TYPE = "WARC-Type";
-	String WARC_DATE = "WARC-Date";
+	final String WARC_DATE = "WARC-Date";
 	String WARC_ID = "WARC-Record-ID";
 	String WARC_CONTENT_LENGTH = "Content-Length";
 	String WARC_CONTENT_TYPE = "Content-Type";
-	//String WARC_Concurrent-To
-	/*
-	
-	String WARC_Block_Digest
-	String WARC_Payload
-	String WARC_IP
-	String WARC_Refers_to
-	String WARC_Target_URI
-	String WARC_Truncated
-	String WARC_warcinfo_ID
-	String WARC_Filename
-	String
-	*/
-	
-	final Pattern WARC_DATE_PATTERN = Pattern.compile(WARC_DATE);
+	String WARC_CONCURRENT_TO = "WARC-Concurrent-To";
+	String WARC_BLOCK_DIGEST = "WARC-Payload-Digest" ;
+	String WARC_PAYLOAD = "WARC-IP-Address";
+	String WARC_IP = "WARC-IP-Address";
+	String WARC_REFERS_TO = "WARC-Refers-To";
+	String WARC_TARGET_URI = "WARC-Target-URI";
+	String WARC_TRUNCATED = "WARC-Truncated";
+	String WARC_WARCINFO_ID = "WARC-Warcinfo-ID";
+	String WARC_FILENAME ="WARC-Filename";
+	String WARC_IDENTIFIED_PAYLOAD_TYPE = "WARC-Identified-Payload-Type";
 	
 	
 	
-	List Lookbehind = new ArrayList<String>();
 	
+		
 	
 	
 
@@ -63,24 +68,28 @@ public interface WARCFormatDetails {
 	
 	
 	//Array of all Header Fields in a WARC Record
-	public static String[] HeaderFields = {
-			"WARC-Type",
+	public static final String[] HeaderFields = {
+			//"WARC-Type",
 			"WARC-Date",
 			"WARC-Record-ID",
 			"Content-Length",
 			"Content-Type",
-			"WARC-Concurrent-To ",
-			"WARC-Block-Digest ",
+			"WARC-Concurrent-To",
+			"WARC-Block-Digest",
 			"WARC-Payload-Digest",
 			"WARC-IP-Address",
 			"WARC-Refers-To",
-			"WARC-Target-URI ",
+			"WARC-Target-URI",
 			"WARC-Truncated",
 			"WARC-Warcinfo-ID",
 			"WARC-Filename", //warcinfo only
 			"WARC-Identified-Payload-Type"
 			
 	};
+	
+	
+	
+
 	
 	
 	
