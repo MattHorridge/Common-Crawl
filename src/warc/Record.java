@@ -1,4 +1,4 @@
-package WARC;
+package warc;
 
 public interface Record {
 	

@@ -1,4 +1,4 @@
-package WARC;
+package warc;
 
 import java.util.ArrayList;
 import java.util.List;

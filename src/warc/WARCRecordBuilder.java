@@ -1,4 +1,4 @@
-package WARC;
+package warc;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/* Class to Read a specific WARC File 
+ * To Generate a series of WARC - Response Records
+ */
 
 
 
@@ -35,29 +38,23 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	private Pattern WARCTypePattern;
 	private String TypeString;
 	private Matcher TypeMatch;
-	private List HeaderList;
+	
 
 	
-	/**
+	/*
 	 * Constructor
 	 */
 	
 	
 	public WARCRecordBuilder(){
-		
-		
 	}
 	
 	
 	
 	public WARCRecordBuilder(File fileIn) throws FileNotFoundException{
-		
 		file = fileIn;
 		in = new FileInputStream(fileIn);
 		reader = new BufferedReader(new InputStreamReader(in));
-		HeaderList = new ArrayList<String>(Arrays.asList(HeaderFields));
-		
-		
 	}
 	
 	
@@ -75,16 +72,15 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	 */
 	
 	
-	public WARCRecord buildRecord(String type) throws Exception{
+	public List<WARCRecord> buildRecords(String type) throws Exception{
 		
 		String currentLine;
 		String nextLine;
 		TypeString = WARC_TYPE + ": " + type;
 		System.out.println(TypeString);
 		WARCTypePattern = Pattern.compile(TypeString); //This what the reader looks for
-		WARCRecord Record = new WARCRecord();
-		Map<String, String> RecordHeaders = new HashMap<String, String>();
-		List ContentBlock = new ArrayList<String>();
+		
+		List<WARCRecord> RecordList = new ArrayList<WARCRecord>();
 		
 		
 		try{
@@ -94,21 +90,16 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 				//If there is a WARC Record of type required
 				if(TypeMatch.find()){
 					//TODO: CREATE NEW WARCRecord
-				
+					
+					Map<String, String> RecordHeaders = new HashMap<String, String>();
+					List<String> ContentBlock = new ArrayList<String>();
+					WARCRecord Record = new WARCRecord();
+					
+					
 					while(!(nextLine = reader.readLine()).trim().equals(REGEX_RECORD_END)){
-						
-						
-						//STORE IN MAP IN WARC RECORD
-								
-							//REGEX_WARC
-							//REGEX_WARC_PATTERN
-							
 							Matcher PatternMatcher = WARC_MATCH_PATTERN.matcher(nextLine);
 							Matcher CTypeMatcher = WARC_CONTENT_TYPE_PATTERN.matcher(nextLine);
 							Matcher CLengthMatcher = WARC_CONTENT_LENGTH_PATTERN.matcher(nextLine);
-							
-							
-							
 							
 							if (PatternMatcher.find()){
 								RecordHeaders.put(PatternMatcher.group(1), PatternMatcher.group(2));	
@@ -119,19 +110,27 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 							else if (CLengthMatcher.find()){
 								RecordHeaders.put(CLengthMatcher.group(1), CLengthMatcher.group(2));
 							}
-						
-					}	
+							else
+							{
+								ContentBlock.add(nextLine);
+							}
+							
+					}
+					
+					//Set data and add record to list
+					Record.setHeaders(RecordHeaders);
+					Record.setContentBlock(ContentBlock);
+					RecordList.add(Record);
+					
 				}
+				
 			}
 		}
 		catch(Exception e)
 		{			
 		}
-		
-		
-		Record.setHeaders(RecordHeaders);
-		
-		return Record;
+		//Return records
+		return RecordList;
 	}
 
 

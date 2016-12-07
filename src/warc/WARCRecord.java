@@ -1,4 +1,4 @@
-package WARC;
+package warc;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -20,18 +20,26 @@ public class WARCRecord implements WARCFormatDetails {
 	
 	
 	//Need to get Content block
-
+	
+	
 	
 	
 	//blank constructor
 	public WARCRecord(){
 		
+		
+	}
+	
+	
+	public WARCRecord(InputStream in){
+
 		//Not sure how to organise ContentBlock
 		//No consistent pattern 
 		ContentBlock = new ArrayList<String>();
 		Headers = new HashMap<String, String>();
-		
 	}
+	
+	
 	
 	
 	public WARCType getType() {
@@ -59,14 +67,7 @@ public class WARCRecord implements WARCFormatDetails {
 	}
 
 
-	public WARCRecord(InputStream in){
 
-		//Not sure how to organise ContentBlock
-		//No consistent pattern 
-		ContentBlock = new ArrayList<String>();
-		
-	}
-	
 
 	public int getContentLength() {
 		return ContentLength;
