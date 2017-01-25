@@ -12,9 +12,7 @@ public class WARCRecord implements WARCFormatDetails {
 	
 
 	protected WARCType type;
-	protected int ContentLength;
-	protected String TargetURI;
-	protected List ContentBlock; //To hold unordered
+	protected List ContentBlock; //To hold unordered HTTP header information
 	protected Map<String, String> Headers;
 
 	
@@ -24,15 +22,12 @@ public class WARCRecord implements WARCFormatDetails {
 	
 	
 	
-	//blank constructor
+
 	public WARCRecord(){
-		
-		
 	}
 	
 	
 	public WARCRecord(InputStream in){
-
 		//Not sure how to organise ContentBlock
 		//No consistent pattern 
 		ContentBlock = new ArrayList<String>();
@@ -65,29 +60,6 @@ public class WARCRecord implements WARCFormatDetails {
 	public void setContentBlock(List contentBlock) {
 		ContentBlock = contentBlock;
 	}
-
-
-
-
-	public int getContentLength() {
-		return ContentLength;
-	}
-
-
-	public void setContentLength(int contentLength) {
-		ContentLength = contentLength;
-	}
-
-
-	public String getTargetURI() {
-		return TargetURI;
-	}
-
-
-	public void setTargetURI(String targetURI) {
-		TargetURI = targetURI;
-	}
-
 
 	public List getContentBlock() {
 		return ContentBlock;

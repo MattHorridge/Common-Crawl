@@ -78,7 +78,7 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 		String nextLine;
 		TypeString = WARC_TYPE + ": " + type;
 		System.out.println(TypeString);
-		WARCTypePattern = Pattern.compile(TypeString); //This what the reader looks for
+		WARCTypePattern = Pattern.compile(TypeString); //This is the start of the desired record 
 		
 		List<WARCRecord> RecordList = new ArrayList<WARCRecord>();
 		

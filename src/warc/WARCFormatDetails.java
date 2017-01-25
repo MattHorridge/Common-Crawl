@@ -33,27 +33,21 @@ public interface WARCFormatDetails {
 	//Header Fields
 	final String WARC_TYPE = "WARC-Type";
 	final String WARC_DATE = "WARC-Date";
-	String WARC_ID = "WARC-Record-ID";
-	String WARC_CONTENT_LENGTH = "Content-Length";
-	String WARC_CONTENT_TYPE = "Content-Type";
-	String WARC_CONCURRENT_TO = "WARC-Concurrent-To";
-	String WARC_BLOCK_DIGEST = "WARC-Payload-Digest" ;
-	String WARC_PAYLOAD = "WARC-IP-Address";
-	String WARC_IP = "WARC-IP-Address";
-	String WARC_REFERS_TO = "WARC-Refers-To";
-	String WARC_TARGET_URI = "WARC-Target-URI";
-	String WARC_TRUNCATED = "WARC-Truncated";
-	String WARC_WARCINFO_ID = "WARC-Warcinfo-ID";
-	String WARC_FILENAME ="WARC-Filename";
-	String WARC_IDENTIFIED_PAYLOAD_TYPE = "WARC-Identified-Payload-Type";
+	final String WARC_ID = "WARC-Record-ID";
+	final String WARC_CONTENT_LENGTH = "Content-Length";
+	final String WARC_CONTENT_TYPE = "Content-Type";
+	final String WARC_CONCURRENT_TO = "WARC-Concurrent-To";
+	final String WARC_BLOCK_DIGEST = "WARC-Payload-Digest" ;
+	final String WARC_PAYLOAD = "WARC-IP-Address";
+	final String WARC_IP = "WARC-IP-Address";
+	final String WARC_REFERS_TO = "WARC-Refers-To";
+	final String WARC_TARGET_URI = "WARC-Target-URI";
+	final String WARC_TRUNCATED = "WARC-Truncated";
+	final String WARC_WARCINFO_ID = "WARC-Warcinfo-ID";
+	final String WARC_FILENAME ="WARC-Filename";
+	final String WARC_IDENTIFIED_PAYLOAD_TYPE = "WARC-Identified-Payload-Type";
 	
 	
-	
-	
-		
-	
-	
-
 	//Responses are only relevant to this project
 	enum WARCType{
 		warcinfo,
@@ -62,11 +56,7 @@ public interface WARCFormatDetails {
 		metadata
 	
 	}
-	
-	
-	
-	
-	
+		
 	//Array of all Header Fields in a WARC Record
 	public static final String[] HeaderFields = {
 			//"WARC-Type",
