@@ -17,13 +17,13 @@ public interface WARCFormatDetails {
 	//Regex strings
 	final String REGEX_BLANK = "^\\s";
 	final String REGEX_RECORD_END = "Connection: close";
-	final String REGEX_WARC = "(WARC.{0,20}:\\s)((.|\n)+)";
+	final String REGEX_RECORD_START = "(WARC.{0,20}:\\s)((.|\n)+)";
 	final String REGEX_CONTENT_TYPE = "(Content-Type.{0,20}:\\s)((.|\n)+)";
 	final String REGEX_CONTENT_LENGTH = "(Content-Length.{0,20}:\\s)((.|\n)+)";
 	
 	
 	//Compiled Regex Patterns
-	final Pattern WARC_MATCH_PATTERN = Pattern.compile(REGEX_WARC);
+	final Pattern WARC_RECORD_START_PATTERN = Pattern.compile(REGEX_RECORD_START);
 	final Pattern WARC_CONTENT_TYPE_PATTERN = Pattern.compile(REGEX_CONTENT_TYPE);
 	final Pattern WARC_CONTENT_LENGTH_PATTERN = Pattern.compile(REGEX_CONTENT_LENGTH);
 	final Pattern REGEX_BLANK_PATTERN = Pattern.compile(REGEX_BLANK);

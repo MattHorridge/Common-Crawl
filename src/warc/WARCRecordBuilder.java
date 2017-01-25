@@ -77,7 +77,8 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 		String currentLine;
 		String nextLine;
 		TypeString = WARC_TYPE + ": " + type;
-		System.out.println(TypeString);
+	
+		
 		WARCTypePattern = Pattern.compile(TypeString); //This is the start of the desired record 
 		
 		List<WARCRecord> RecordList = new ArrayList<WARCRecord>();
@@ -97,15 +98,15 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 					
 					
 					while(!(nextLine = reader.readLine()).trim().equals(REGEX_RECORD_END)){
-							Matcher PatternMatcher = WARC_MATCH_PATTERN.matcher(nextLine);
-							Matcher CTypeMatcher = WARC_CONTENT_TYPE_PATTERN.matcher(nextLine);
+							Matcher PatternMatcher = WARC_RECORD_START_PATTERN.matcher(nextLine);
+							Matcher contentTypeMatcher = WARC_CONTENT_TYPE_PATTERN.matcher(nextLine);
 							Matcher CLengthMatcher = WARC_CONTENT_LENGTH_PATTERN.matcher(nextLine);
 							
 							if (PatternMatcher.find()){
 								RecordHeaders.put(PatternMatcher.group(1), PatternMatcher.group(2));	
 							}
-							else if (CTypeMatcher.find()){
-								RecordHeaders.put(CTypeMatcher.group(1), CTypeMatcher.group(2));;
+							else if (contentTypeMatcher.find()){
+								RecordHeaders.put(contentTypeMatcher.group(1), contentTypeMatcher.group(2));;
 							}
 							else if (CLengthMatcher.find()){
 								RecordHeaders.put(CLengthMatcher.group(1), CLengthMatcher.group(2));
