@@ -27,7 +27,7 @@ public class CommonCrawlReaderTest {
 		
 		File g = new File("/Volumes/MATT WORK/Work/Common Crawl Knows it All/MainProject/bbc.warc");
 		
-		WARCRecordBuilder rest = new WARCRecordBuilder(g);
+		WARCRecordBuilder rest = new WARCRecordBuilder(f);
 		
 		List<WARCRecord> test = rest.buildRecords("response");
 		

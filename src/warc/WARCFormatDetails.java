@@ -10,10 +10,6 @@ public interface WARCFormatDetails {
 	//Interface to help handle HTTP responses in WARC file
 	
 	
-	
-	
-	
-	
 	//Regex strings
 	final String REGEX_BLANK = "^\\s";
 	final String REGEX_RECORD_END = "Connection: close";
