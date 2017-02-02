@@ -10,8 +10,17 @@ public class Extractor {
 		
 	}
 	
+	//TODO: If target URI =
 	
 	
+	public WARCRecord extract(){
+		
+		
+		return null;
+	}
+	
+	
+
 	
 	
 	

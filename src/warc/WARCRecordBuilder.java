@@ -40,7 +40,7 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	private String TypeString;
 	private URL target;
 	private Matcher TypeMatch;
-	Matcher urlmatch;
+	
 	
 
 	
@@ -80,13 +80,6 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 		String currentLine;
 		String nextLine;
 		TypeString = WARC_TYPE + ": " + type;
-		target = new URL("http://www.archive.org/");
-		
-		
-		Pattern tPattern = Pattern.compile(target.toString());
-		
-		
-	
 		
 		WARCTypePattern = Pattern.compile(TypeString); //This is the start of the desired record 
 		
@@ -96,7 +89,7 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 		try{
 			while((currentLine = reader.readLine())!= null){
 				TypeMatch = WARCTypePattern.matcher(currentLine);
-				urlmatch = tPattern.matcher(currentLine);
+			
 				
 				//If there is a WARC Record of type required
 				if(TypeMatch.find()){
