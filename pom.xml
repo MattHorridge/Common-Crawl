@@ -16,9 +16,8 @@
       </plugin>
     </plugins>
   </build>
-
-
-<dependencies>
+  
+  <dependencies>
   <dependency>
     <groupId>
       com.amazonaws
@@ -31,6 +30,7 @@
     </version>
   </dependency>
 </dependencies>
+
 
 
 </project>
