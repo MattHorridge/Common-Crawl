@@ -53,11 +53,11 @@ public class CommonCrawlReaderTest {
 		
 */		
 		
-		SegmentExtractor testExtraction = new SegmentExtractor("/Users/matthorridge/Documents/WIDE-20110225210142891-04382-13730-crawl301.us.archive.org-9443.warc.gz", "UTF-8");
+	//	SegmentExtractor testExtraction = new SegmentExtractor("/Users/matthorridge/Documents/WIDE-20110225210142891-04382-13730-crawl301.us.archive.org-9443.warc.gz", "UTF-8");
 		
 		
 		
-		testExtraction.printReader();
+		//testExtraction.printReader();
 	}
 
 	

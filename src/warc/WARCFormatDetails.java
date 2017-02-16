@@ -18,7 +18,7 @@ public interface WARCFormatDetails {
 	final String REGEX_CONTENT_LENGTH = "(Content-Length.{0,20}:\\s)((.|\n)+)";
 	
 	
-	//Compiled Regex Patterns
+	//Compiled Patterns
 	final Pattern WARC_RECORD_START_PATTERN = Pattern.compile(REGEX_RECORD_START);
 	final Pattern WARC_CONTENT_TYPE_PATTERN = Pattern.compile(REGEX_CONTENT_TYPE);
 	final Pattern WARC_CONTENT_LENGTH_PATTERN = Pattern.compile(REGEX_CONTENT_LENGTH);

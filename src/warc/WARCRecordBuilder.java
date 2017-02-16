@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+
+import ziptools.SegmentExtractor;
 
 /* Class to Read a specific WARC File 
  * To Generate a series of WARC - Response Records
@@ -34,15 +39,17 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	
 	
 	private File file;
-	private InputStream in;
-	private BufferedReader reader;
+	private InputStream inputStream;
+	private BufferedReader filereader;
+	private Reader decoder;
 	private Pattern WARCTypePattern;
 	private String TypeString;
 	private URL target;
 	private Matcher TypeMatch;
-	
-	
 
+	private SegmentExtractor extractor;
+	
+	public static enum streamType {FILE, GZIP, BYTE};
 	
 	/*
 	 * Constructor
@@ -50,21 +57,51 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	
 	
 	public WARCRecordBuilder(){
+		extractor = new SegmentExtractor("SDKTestUser");
 	}
 	
 	
 	
 	public WARCRecordBuilder(File fileIn) throws FileNotFoundException{
 		file = fileIn;
-		in = new FileInputStream(fileIn);
-		reader = new BufferedReader(new InputStreamReader(in));
+		inputStream = new FileInputStream(fileIn);
+		filereader = new BufferedReader(new InputStreamReader(inputStream));
+	}
+	
+	public void Stream(streamType type, Object input) throws IOException, FileNotFoundException{
+		
+		switch(type)
+		{
+		case FILE: inputStream = new FileInputStream((String) input);
+		break;
+		case GZIP: inputStream = new GZIPInputStream( (InputStream) input);
+		decoder = new InputStreamReader(inputStream, extractor.getEncoding());
+		filereader = new BufferedReader(decoder);
+			try {
+				testRecords3("response", filereader);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		break;
+		default:
+			break;
+		}
+	
+	}
+	
+	
+	
+	public void setFile(File f){
+		file = f;
 	}
 	
 	
 	
 	
+	
 	/**
-	 * Method buildResponseRecord
+	 * Method buildrecords
 	 * @return WARCRecord Object
 	 * @throws Exception
 	 * 
@@ -74,8 +111,7 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	 * 
 	 */
 	
-	
-	public List<WARCRecord> buildRecords(String type) throws Exception{
+	public List<WARCRecord> buildRecords(String type, BufferedReader reader) throws Exception{
 		
 		String currentLine;
 		String nextLine;
@@ -133,8 +169,93 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 		catch(Exception e)
 		{			
 		}
-		//Return records
 		return RecordList;
+		
+	}
+	
+	
+	
+	public void testRecords3(String type, BufferedReader reader){
+		
+		
+		String currentLine;
+		String nextLine;
+		TypeString = WARC_TYPE + ": " + type;
+		
+		WARCTypePattern = Pattern.compile(TypeString); //This is the start of the desired record 
+		
+		List<WARCRecord> RecordList = new ArrayList<WARCRecord>();
+		
+		String URLtest = "http://0.tqn.com";
+		
+		Pattern URLpattern = Pattern.compile(URLtest);
+		
+		
+		
+		try{
+			while((currentLine = reader.readLine())!= null){
+				TypeMatch = WARCTypePattern.matcher(currentLine);
+			
+				
+				//If there is a WARC Record of type required
+				if(TypeMatch.find()){
+					//TODO: Found Bug - need exit loop
+					System.out.println(" ");
+					System.out.println(currentLine);
+					
+					//Map<String, String> RecordHeaders = new HashMap<String, String>();
+					//List<String> ContentBlock = new ArrayList<String>();
+					//WARCRecord Record = new WARCRecord();
+					
+					//TODO: THis check doesnt work - FIX BUG
+					//while(!(nextLine = reader.readLine()).trim().equals(REGEX_RECORD_END)){
+					int count = 0;
+					while(!(nextLine = reader.readLine()).trim().equals("kkktestkkkk")){
+							
+							//System.out.println(nextLine);
+							Matcher PatternMatcher = WARC_RECORD_START_PATTERN.matcher(nextLine);
+							Matcher contentTypeMatcher = WARC_CONTENT_TYPE_PATTERN.matcher(nextLine);
+							Matcher CLengthMatcher = WARC_CONTENT_LENGTH_PATTERN.matcher(nextLine);
+							
+							if(count == 2){
+								count = 0;
+								break;
+							}
+							
+							else if(nextLine.contains(WARC_TARGET_URI) && (nextLine.toLowerCase().contains(URLtest))){
+								System.out.println("FOUND IT");
+								System.out.println(nextLine);
+							
+							}
+							else if(nextLine.trim().isEmpty()){
+								count++;
+							}
+							else if (PatternMatcher.find()){
+								//RecordHeaders.put(PatternMatcher.group(1), PatternMatcher.group(2));	
+								//System.out.println(PatternMatcher.group(1).toString() + " " + PatternMatcher.group(2).toString());
+							}
+							else if (contentTypeMatcher.find()){
+								//RecordHeaders.put(contentTypeMatcher.group(1), contentTypeMatcher.group(2));;
+								//System.out.println(contentTypeMatcher.group(1).toString() + " " + contentTypeMatcher.group(2).toString());
+							}
+							else if (CLengthMatcher.find()){
+								//RecordHeaders.put(CLengthMatcher.group(1), CLengthMatcher.group(2));
+								//System.out.println(CLengthMatcher.group(1).toString() + " " + CLengthMatcher.group(2).toString());
+							}
+							else 
+							{
+								//ContentBlock.add(nextLine);
+								//System.out.println(nextLine);
+							}	
+					}
+					
+				}
+				
+			}
+		}
+		catch(Exception e)
+		{			
+		}
 	}
 
 
@@ -142,31 +263,17 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	public File getFile() {
 		return file;
 	}
-
-
-
-	public void setFile(File file) {
-		this.file = file;
-	}
-
-
-
 	public InputStream getIn() {
-		return in;
+		return inputStream;
 	}
 
 
 
 	public void setIn(InputStream in) {
-		this.in = in;
+		this.inputStream = in;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-
+	public SegmentExtractor getSegmentExtractor(){
+		return extractor;
+	}
 }

@@ -51,7 +51,10 @@ public class WARCFileResponseParser implements WARCFormatDetails{
 			
 		}
 		catch(Exception e)
-		{}
+		{
+			
+			
+		}
 		
 		
 		

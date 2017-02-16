@@ -7,82 +7,108 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.zip.GZIPInputStream;
+
+import com.amazonaws.services.s3.model.S3Object;
+
+import awsAccess.s3Access;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 //Class for the extraction of gzipped WARC files
-//TODO: Text locally
 
+/**
+ * Class to extract a specified segment from s3
+ * Replaces S3DataStream
+ * @author matthorridge
+ *
+ */
+
+
+
+//TODO: Improve this to target specific segment
+//TODO: incorporate the API for grabbing segments of a URL
+//TODO: Figure out how to organse those segments
+//TODO: Return the segment input stream to be passed into WARCRecordBuilder
 
 public class SegmentExtractor {
 
-	private String segmentAddress;
-	private String encoding = "UTF-8"; //default encoding follows that of WARC encoding
-	private InputStream fileStream, gzipStream;
-	private BufferedReader segmentReader;
-	private Reader reader;
-	private String line;
-	private Matcher TypeMatch;
+	private String key; //s3 public segment key
+	private String bucket;	
+	private String User;
+	private s3Access pipeLine;
+	private String encoding;
 	
 	
-	
-	//Constructor
-	public SegmentExtractor(String address){
-		
-		segmentAddress = address;
+	/**
+	 * Blank Constructor
+	 */
+	public SegmentExtractor(){
 	}
 	
-	public SegmentExtractor(String address, String Encoding) throws IOException{
+	public SegmentExtractor(String UserName){
 		
-		segmentAddress = address;
-		encoding = Encoding;
-		fileStream = new FileInputStream(segmentAddress);
-		gzipStream = new GZIPInputStream(fileStream);
-		
-		
-		Reader decoder = new InputStreamReader(gzipStream, encoding);
-		
-		segmentReader = new BufferedReader(decoder);
+		User = UserName;
+		pipeLine = new s3Access(User);
+		encoding = "UTF-8"; //Default format for project is UTF-8 
+		//TODO: refactor this a bit - there may be other formats to consideer
 	}
 	
-	
-	public BufferedReader getsegmentReader(){
-		
-		//TODO:Set up Gzipstream, file stream, buffered reader
-		
-		
-		return null;
-		
+	public SegmentExtractor(String UserName, String Bucket, String Key){
+		User = UserName;
+		pipeLine = new s3Access(User);
+		bucket = Bucket;
+		key = Key;
 	}
 	
-	public void printReader(){
-		
-		String nextLine;
-		String TypeString = "WARC-Type: response";
-		
-		Pattern typePattern = Pattern.compile(TypeString);
-		
-		try {
-			while ((line = segmentReader.readLine())!= null){
-				TypeMatch = typePattern.matcher(line);
-				
-				//System.out.println(line);
-				
-				if(TypeMatch.find()){
-					System.out.println(line);
-				}
-				
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	/**
+	 * Pulls desired segment object from s3bucket
+	 * @param Bucket
+	 * @param Key
+	 * @return
+	 */
+	public S3Object extractSegment(String Bucket, String Key){
+		S3Object ccSegment = pipeLine.getS3Instance().getObject(Bucket,Key);
+		return ccSegment;	
 	}
 	
 	
 	
+	/**
+	 * Extract input stream form s3Object to then be parsed.
+	 * For CC the inputstream will need a GZIP extraction
+	 * @param segment
+	 * @return
+	 */
+	public InputStream extractSegmentStream(S3Object segment) {
+		return segment.getObjectContent();	
+	}
 	
 	
+	public String getKey(){
+		return key;
+	}
 	
+	public String getBucket(){
+		return bucket;
+	}
+	
+	public void setKey(String k){
+		key = k;
+	}
+	
+	public void setBucket(String b){
+		bucket = b;
+	}
+	
+	public void setEncoding(String encodingType){
+		encoding = encodingType;
+	}
+	
+	public String getEncoding(){
+		return encoding;
+	}
+
 }

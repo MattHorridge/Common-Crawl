@@ -3,8 +3,13 @@ package awsAccess;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
+
+import warc.WARCRecordBuilder;
+import warc.WARCRecordBuilder.streamType;
+
 import com.amazonaws.services.s3.AmazonS3Client;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import com.amazonaws.AmazonClientException;
@@ -38,11 +43,12 @@ public class S3AccessTestOne {
 	 * the credentials file in your source directory.
 	 *
 	 * http://aws.amazon.com/security-credentials
+	 * @throws IOException 
 	 */
 	
 	
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) throws IOException {
+		/*
 		//credentials
 		
 		AWSCredentials creds = null;
@@ -79,8 +85,42 @@ public class S3AccessTestOne {
 		System.out.println("created bucket: "+ bucketName );
 				
 		
+	*/	
+		
+		
+		//S3DataStream testy = new S3DataStream();
+		//testy.run();
+		
+		WARCRecordBuilder j = new WARCRecordBuilder();
+		
+		j.Stream(streamType.GZIP, j.getSegmentExtractor().extractSegment("aws-publicdatasets", "common-crawl/crawl-data/CC-MAIN-2013-20/segments/1368699755211/warc/CC-MAIN-20130516102235-00011-ip-10-60-113-184.ec2.internal.warc.gz").getObjectContent());
+		
+		
+		
+		
+		//System.out.println(test.getHeaders());
+		//System.out.println(test.get(15).getHeaders());
+		//System.out.println(test.get(15).getContentBlock());
+		
+		
+		
+		/*
+		for(int i = 0; i < test.size(); i++){
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+			System.out.println(test.get(i).getHeaders());
+			System.out.println(test.get(i).getContentBlock());
+		}
+		
+		
+		
+		System.out.println(test.size());
+		
+		
+		
+*/		
 		
 	}
+	
 	
 	
 //Future iterations will require use of EMR client builder - this file will use basic s3 access.	
