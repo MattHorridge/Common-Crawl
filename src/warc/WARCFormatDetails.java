@@ -13,7 +13,12 @@ public interface WARCFormatDetails {
 	//Regex strings
 	final String REGEX_BLANK = "^\\s";
 	final String REGEX_RECORD_END = "Connection: close";
+	
+	//Regex for matching a line begining with WARC.. and then
+	//Splitting it into two components, the WARC prefix and data presented after
 	final String REGEX_RECORD_START = "(WARC.{0,20}:\\s)((.|\n)+)";
+	//Used to split the WARC-TARGET-URI and grab right URL
+	final String REGEX_URI_SPLIT = "(WARC-Target-URI:\\s)((.|\n)+)";
 	final String REGEX_CONTENT_TYPE = "(Content-Type.{0,20}:\\s)((.|\n)+)";
 	final String REGEX_CONTENT_LENGTH = "(Content-Length.{0,20}:\\s)((.|\n)+)";
 	
@@ -23,6 +28,7 @@ public interface WARCFormatDetails {
 	final Pattern WARC_CONTENT_TYPE_PATTERN = Pattern.compile(REGEX_CONTENT_TYPE);
 	final Pattern WARC_CONTENT_LENGTH_PATTERN = Pattern.compile(REGEX_CONTENT_LENGTH);
 	final Pattern REGEX_BLANK_PATTERN = Pattern.compile(REGEX_BLANK);
+	final Pattern WARC_URI_SPLIT_PATTERN = Pattern.compile(REGEX_URI_SPLIT);
 
 	
 	

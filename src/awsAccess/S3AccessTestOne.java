@@ -4,12 +4,15 @@ package awsAccess;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
 
+import warc.WARCRecord;
 import warc.WARCRecordBuilder;
 import warc.WARCRecordBuilder.streamType;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.amazonaws.AmazonClientException;
@@ -93,7 +96,37 @@ public class S3AccessTestOne {
 		
 		WARCRecordBuilder j = new WARCRecordBuilder();
 		
-		j.Stream(streamType.GZIP, j.getSegmentExtractor().extractSegment("aws-publicdatasets", "common-crawl/crawl-data/CC-MAIN-2013-20/segments/1368699755211/warc/CC-MAIN-20130516102235-00011-ip-10-60-113-184.ec2.internal.warc.gz").getObjectContent());
+		j.openStream(streamType.GZIP, j.getSegmentExtractor().extractSegment("aws-publicdatasets", "common-crawl/crawl-data/CC-MAIN-2013-20/segments/1368699755211/warc/CC-MAIN-20130516102235-00011-ip-10-60-113-184.ec2.internal.warc.gz").getObjectContent());
+		
+		try {
+			//
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		WARCRecord poo = j.testRecords3("response", j.getFilereader());
+		System.out.println("Finished");
+		
+		Map<String, String> t = poo.getHeaders();
+		List<String> s = poo.getContentBlock();
+		
+		
+		
+		
+		
+		//System.out.println(t.keySet());
+		
+		//System.out.println(t.values());
+		
+		for (Map.Entry entry : t.entrySet()) {
+		    System.out.println(entry.getKey() + ", " + entry.getValue());
+		}
+		
+		
+		for (String item: s){
+			System.out.println(item);
+		}
 		
 		
 		
