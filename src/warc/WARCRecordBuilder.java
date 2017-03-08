@@ -167,6 +167,10 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 		
 		List<WARCRecord> RecordList = new ArrayList<WARCRecord>();
 		
+		
+		//"http://0.tqn.com/6/g/candleandsoap/b/rss2.xml"
+		//"http://www.poo.com"
+		
 		String URLtest = "http://0.tqn.com/6/g/candleandsoap/b/rss2.xml";
 		
 		Pattern URLpattern = Pattern.compile(URLtest);

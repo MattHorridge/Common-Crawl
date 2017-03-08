@@ -27,12 +27,6 @@ import java.util.regex.Pattern;
  */
 
 
-
-//TODO: Improve this to target specific segment
-//TODO: incorporate the API for grabbing segments of a URL
-//TODO: Figure out how to organse those segments
-//TODO: Return the segment input stream to be passed into WARCRecordBuilder
-
 public class SegmentExtractor {
 
 	private String key; //s3 public segment key
@@ -56,12 +50,6 @@ public class SegmentExtractor {
 		//TODO: refactor this a bit - there may be other formats to consideer
 	}
 	
-	public SegmentExtractor(String UserName, String Bucket, String Key){
-		User = UserName;
-		pipeLine = new s3Access(User);
-		bucket = Bucket;
-		key = Key;
-	}
 	
 	/**
 	 * Pulls desired segment object from s3bucket

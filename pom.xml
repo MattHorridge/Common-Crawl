@@ -14,10 +14,25 @@
           <target/>
         </configuration>
       </plugin>
+      
+      <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-jar-plugin</artifactId>
+		<version>2.4</version>
+		<configuration>
+		<archive>
+	<manifest>
+	<mainClass>org.microsoft.andrewmoll.testnumber2.App</mainClass>
+	</manifest>
+	</archive>
+	</configuration>
+	</plugin>
+      
     </plugins>
   </build>
   
   <dependencies>
+  
   <dependency>
     <groupId>
       com.amazonaws
@@ -29,6 +44,16 @@
     1.11.22
     </version>
   </dependency>
+  
+  
+ <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-client -->
+<dependency>
+    <groupId>org.apache.hadoop</groupId>
+    <artifactId>hadoop-client</artifactId>
+    <version>2.7.3</version>
+</dependency>
+
+  
 </dependencies>
 
 
