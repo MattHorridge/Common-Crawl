@@ -53,7 +53,8 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	
 	
 	public WARCRecordBuilder(){
-		extractor = new SegmentExtractor("SDKTestUser");
+		//
+		extractor = new SegmentExtractor("testUserLinux");
 	}
 	
 	

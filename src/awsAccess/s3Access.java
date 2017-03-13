@@ -2,11 +2,14 @@ package awsAccess;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+
 
 /**
  * Class to handle S3 Access
@@ -34,8 +37,20 @@ public class s3Access {
 	
 	public s3Access(String User){
 		//Blank for now
+		
+		
+		String AccessKey = "AKIAJL45LAS6LGGHQESQ";
+		String SecretKey = "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";
+
+		
+		
+
+		BasicAWSCredentials cred= new BasicAWSCredentials(AccessKey, SecretKey);
+		//change this sooooncret
+		s3 = new AmazonS3Client(cred);
+		
 	
-		s3 = new AmazonS3Client(credSetup(User));
+		
 		Region s3Region = Region.getRegion(Regions.US_EAST_1); //Default Region US_EAST_1
 		s3.setRegion(s3Region);
 
@@ -55,6 +70,7 @@ public class s3Access {
 			//Grab credentials for specific user
 			//In testing/practice user will almost always be "SDKTestUser"
 			creds = new ProfileCredentialsProvider(User).getCredentials();
+			
 		}
 		catch (Exception e){
 			throw new AmazonClientException(

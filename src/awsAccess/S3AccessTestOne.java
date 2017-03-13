@@ -8,6 +8,7 @@ import mapreduce.RecordMapper;
 import warc.WARCRecord;
 import warc.WARCRecordBuilder;
 import warc.WARCRecordBuilder.streamType;
+import ziptools.SegmentExtractor;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -33,7 +34,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
-
 import com.amazonaws.services.elasticmapreduce.*;
 import com.amazonaws.services.elasticmapreduce.model.AddJobFlowStepsRequest;
 import com.amazonaws.services.elasticmapreduce.model.AddJobFlowStepsResult;
@@ -45,7 +45,7 @@ import org.apache.hadoop.util.ToolRunner;
 
 
 
-public class S3AccessTestOne extends Configured implements Tool {
+public class S3AccessTestOne {
 /**
  * Class to test basic access to s3 - will be basis to server side control of project including creating/destroying buckets,
  * moving data around and emailing the end user.
@@ -74,27 +74,52 @@ public class S3AccessTestOne extends Configured implements Tool {
 	public static void main(String[] args) throws Exception {
 		
 		
+		
+		
+		
 		AWSCredentials creds = null;
 		
 		//try to get credentials from SDKTestUser locally
-		try{
-			creds = new ProfileCredentialsProvider("SDKTestUser").getCredentials();
-		}
-		catch (Exception e){
-			throw new AmazonClientException(
-					"Cannot load the credentials from the credential profiles file. " +
-		                    "Please make sure that your credentials file is at the correct " +
-		                    "location (/Users/matthorridge/.aws/credentials), and is in valid format.",
-		                    e);
-		}
+		//try{
+			//creds = new ProfileCredentialsProvider("SDKTestUser").getCredentials();
+		//}
+		//catch (Exception e){
+			//throw new AmazonClientException(
+				//	"Cannot load the credentials from the credential profiles file. " +
+		          //          "Please make sure that your credentials file is at the correct " +
+		            //        "location (/Users/matthorridge/.aws/credentials), and is in valid format.",
+		              //      e);
+		//}
 		
-		
-		 	int res = ToolRunner.run(new S3AccessTestOne(), args);
-	        System.exit(res);
-		
-		
-		
+		String inputpath = "s3n://mhs3accesstest/testin/MRtestread.txt";
 
+		String outputPath = "s3n://mhs3accesstest/testout";
+		
+		
+		
+		Configuration conf = new Configuration();
+		Job job = Job.getInstance(conf, "testjar");
+	    job.setJarByClass(S3AccessTestOne.class);
+		job.setInputFormatClass(KeyValueTextInputFormat.class);
+		job.setOutputFormatClass(TextOutputFormat.class);
+	    job.setMapperClass(RecordMapper.class);
+	    
+	    
+	    job.setMapOutputKeyClass(Text.class);
+	    job.setMapOutputValueClass(WARCRecord.class);
+	    
+	    job.setNumReduceTasks(0);
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(WARCRecord.class);
+	
+		FileInputFormat.addInputPath(job,  new Path(args[1]));
+		
+		
+		FileOutputFormat.setOutputPath(job,  new Path(args[2]));
+		
+		System.exit(job.waitForCompletion(true) ? 0 : 1);	      
+	        
+	        
 		//final AmazonS3 s3 = new AmazonS3Client(creds);
 		//Region usWest2 = Region.getRegion(Regions.US_WEST_2);
 		//s3.setRegion(usWest2);
@@ -216,38 +241,15 @@ public class S3AccessTestOne extends Configured implements Tool {
 */		
 		
 	}
-
-	public int run(String[] args) throws Exception {
+//
+	//public int run(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		
 		
 		//String inputpath = "common-crawl/crawl-data/CC-MAIN-2013-20/segments/1368699755211/warc/CC-MAIN-20130516102235-00011-ip-10-60-113-184.ec2.internal.warc.gz";
 		//not sure
-		String inputpath = "s3n://mhs3accesstest/testin/MRtestread.txt";
-
-		String outputPath = "s3n://mhs3accesstest/testout";
-		
-		
-		
-		Configuration conf = new Configuration();
-		Job job = Job.getInstance(conf, "testjar");
-	    job.setJarByClass(S3AccessTestOne.class);
-		job.setInputFormatClass(KeyValueTextInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
-	    job.setMapperClass(RecordMapper.class);
-	   // job.setMapOutputKeyClass(Text.class);
-	    //job.setMapOutputValueClass(WARCRecord.class);
-	    job.setNumReduceTasks(0);
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(WARCRecord.class);
-	
-		FileInputFormat.addInputPath(job, new Path(inputpath));
-		
-		
-		FileOutputFormat.setOutputPath(job, new Path(outputPath));
-		
-		return (job.waitForCompletion(true) == true ? 0 : -1);
-	}
+		//;
+	//}
 	
 	
 //Future iterations will require use of EMR client builder - this file will use basic s3 access.	

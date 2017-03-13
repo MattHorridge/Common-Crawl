@@ -68,8 +68,6 @@ public class WARCRecord implements WARCFormatDetails, Writable {
 	public void readFields(DataInput arg0) throws IOException {
 		// TODO FINISH THIS
 		
-		
-		
 	}
 
 

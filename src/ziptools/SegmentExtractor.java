@@ -44,10 +44,11 @@ public class SegmentExtractor {
 	
 	public SegmentExtractor(String UserName){
 		
+		
 		User = UserName;
 		pipeLine = new s3Access(User);
 		encoding = "UTF-8"; //Default format for project is UTF-8 
-		//TODO: refactor this a bit - there may be other formats to consideer
+		//TODO: refactor th(
 	}
 	
 	
