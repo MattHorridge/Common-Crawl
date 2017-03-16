@@ -31,9 +31,6 @@ public class s3Access {
 	 */
 	
 	 private final AmazonS3 s3;
-	 
-	
-	
 	
 	public s3Access(String User){
 		//Blank for now

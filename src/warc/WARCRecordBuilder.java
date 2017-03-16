@@ -157,7 +157,7 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	
 	
 	
-	public WARCRecord testRecords3(String type, BufferedReader reader){
+	public WARCRecord testRecords3(String type, BufferedReader reader, String target){
 		
 		
 		String currentLine;
@@ -166,16 +166,12 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 		
 		WARCTypePattern = Pattern.compile(TypeString); //This is the start of the desired record 
 		
-		List<WARCRecord> RecordList = new ArrayList<WARCRecord>();
-		
+
 		
 		//"http://0.tqn.com/6/g/candleandsoap/b/rss2.xml"
 		//"http://www.poo.com"
 		
-		String URLtest = "http://0.tqn.com/6/g/candleandsoap/b/rss2.xml";
-		
-		Pattern URLpattern = Pattern.compile(URLtest);
-		
+	
 		
 		//create Record Object
 		WARCRecord Record = new WARCRecord();
@@ -216,7 +212,7 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 							}
 							
 							else if(URLsplitMatcher.find()){
-								if(URLsplitMatcher.group(2).toLowerCase().equals(URLtest)){
+								if(URLsplitMatcher.group(2).toLowerCase().equals(target)){
 								System.out.println("FOUND IT");
 								System.out.println(nextLine);
 								Headers.put(URLsplitMatcher.group(1), URLsplitMatcher.group(2));

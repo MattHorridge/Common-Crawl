@@ -1,13 +1,12 @@
 package mapreduce;
 
-import java.io.DataOutput;
-import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper; //The interface
+//The interface
 
-
-
+import org.apache.hadoop.mapreduce.Mapper;
 
 import warc.WARCRecord;
 import warc.WARCRecordBuilder;
@@ -37,36 +36,40 @@ public class RecordMapper extends Mapper<Text, Text, Text, WARCRecord> {
 
 	private static final Log LOG = LogFactory.getLog(RecordMapper.class);
 	
-	private DataOutput out;
+
 	
-	
+	@Override
 	public void map(Text URL, Text SegmentName, 
 			Context context)  {
 		
 		
 		
 		LOG.info("Try to map");
-		// TODO Auto-generated method stub
 		try{
 			
-			
-			
 			WARCRecordBuilder RBuilder = new WARCRecordBuilder();
-			
 			//String testString = "http://0.tqn.com/6/g/candleandsoap/b/rss2.xml";
 			
-			
 			RBuilder.openStream(streamType.GZIP, RBuilder.getSegmentExtractor().extractSegment("aws-publicdatasets", SegmentName.toString()).getObjectContent());
-			WARCRecord poo = RBuilder.testRecords3("response", RBuilder.getFilereader());
+			WARCRecord R = RBuilder.testRecords3("response", RBuilder.getFilereader(), URL.toString());
 			//output
-			Text OutputKey = new Text(URL);
-			context.write(OutputKey, poo);
+		
+			context.write(URL, R);
 			LOG.info("mapper finished");
+			
 			
 		}
 		
 		catch(Exception e){
 			LOG.info(e);
+			
+			//LOG.info(e.printStackTrace());
+			System.out.println(e.getStackTrace().toString());
+			
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			System.out.println(errors.toString());
+			
 		}
 	}
 
