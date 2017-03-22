@@ -3,9 +3,8 @@ package mapreduce;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
-//The interface
-
 import org.apache.hadoop.mapreduce.Mapper;
 
 import warc.WARCRecord;
@@ -14,6 +13,10 @@ import warc.WARCRecordBuilder.streamType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
 
 /*
  * TODO: Refactor name etc
@@ -31,39 +34,56 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 
-
 public class RecordMapper extends Mapper<Text, Text, Text, WARCRecord> {
 
 	private static final Log LOG = LogFactory.getLog(RecordMapper.class);
-	
+	private AWSCredentials creds;
 
 	
 	@Override
-	public void map(Text URL, Text SegmentName, 
-			Context context)  {
+	public void map(Text URL, Text SegmentName, Context context)  {
 		
 		
 		
+		Configuration config = context.getConfiguration();
+		creds = null;
+		
+		try {
+			creds = new BasicAWSCredentials(config.get("inputKey"), config.get("inputSecret"));
+		}
+		catch(Exception e){ 
+			throw new AmazonClientException("Credentials were not correctly entered - provide your correct credentails in the "
+					+ "specfied format",
+		                    e);
+		}
+		
+		
+	
 		LOG.info("Try to map");
 		try{
 			
-			WARCRecordBuilder RBuilder = new WARCRecordBuilder();
-			//String testString = "http://0.tqn.com/6/g/candleandsoap/b/rss2.xml";
+			WARCRecordBuilder RBuilder = new WARCRecordBuilder(creds);
+			
 			
 			RBuilder.openStream(streamType.GZIP, RBuilder.getSegmentExtractor().extractSegment("aws-publicdatasets", SegmentName.toString()).getObjectContent());
-			WARCRecord R = RBuilder.testRecords3("response", RBuilder.getFilereader(), URL.toString());
+			WARCRecord Record = RBuilder.buildRecord("response", RBuilder.getFilereader(), URL.toString());
 			//output
+			
+			if (Record == null){
+				LOG.info("mapper finished");
+				LOG.info("Desired URL Not Found");
+				return;
+			}
 		
-			context.write(URL, R);
+			context.write(URL, Record);
 			LOG.info("mapper finished");
-			
-			
 		}
 		
 		catch(Exception e){
+			
+			//Some debugging
 			LOG.info(e);
 			
-			//LOG.info(e.printStackTrace());
 			System.out.println(e.getStackTrace().toString());
 			
 			StringWriter errors = new StringWriter();
@@ -73,11 +93,5 @@ public class RecordMapper extends Mapper<Text, Text, Text, WARCRecord> {
 		}
 	}
 
-	
-	//Map function
-	
-	
-	
-	
 
 }

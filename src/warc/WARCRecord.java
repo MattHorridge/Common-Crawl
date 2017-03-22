@@ -15,13 +15,14 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 
 
-public class WARCRecord implements WARCFormatDetails, WritableComparable {
+public class WARCRecord implements WARCFormatDetails, Writable {
 	
 
 	protected WARCType type;
 	protected String warcTypeString;
-	protected List<Object> ContentBlock; //To hold unordered HTTP header information
+	protected List<String> ContentBlock; //To hold unordered HTTP header information
 	protected Map<String, String> Headers;
+	protected Boolean isBlank;
 	private String k;
 	
 	
@@ -30,7 +31,7 @@ public class WARCRecord implements WARCFormatDetails, WritableComparable {
 	 */
 	public WARCRecord(){
 		
-		
+		isBlank = false;
 	}
 	
 
@@ -54,11 +55,11 @@ public class WARCRecord implements WARCFormatDetails, WritableComparable {
 	}
 
 
-	public void setContentBlock(List contentBlock) {
+	public void setContentBlock(List<String> contentBlock) {
 		ContentBlock = contentBlock;
 	}
 
-	public List getContentBlock() {
+	public List<String> getContentBlock() {
 		return ContentBlock;
 	}
 
@@ -77,9 +78,7 @@ public class WARCRecord implements WARCFormatDetails, WritableComparable {
 		
 		k = input.readUTF();
 		
-		//System.out.println(k);
 		
-		//System.out.println(type);
 		
 		int numofdata = input.readInt();
 		
@@ -109,6 +108,8 @@ public class WARCRecord implements WARCFormatDetails, WritableComparable {
 		this.setContentBlock(newCBlock);
 		
 		//System.out.println(this);
+		
+		this.setBlank(input.readBoolean());
 	}
 
 
@@ -117,7 +118,7 @@ public class WARCRecord implements WARCFormatDetails, WritableComparable {
 	public void write(DataOutput output) throws IOException {
 				
 		//List Iterator
-		Iterator ListIterator = ContentBlock.listIterator();
+		Iterator<String> ListIterator = ContentBlock.listIterator();
 		Iterator<Entry<String, String>> HeaderIterator = Headers.entrySet().iterator();
 		
 		
@@ -141,6 +142,8 @@ public class WARCRecord implements WARCFormatDetails, WritableComparable {
 			output.writeUTF(e.toString());
 		}
 		
+		output.writeBoolean(this.getBlank());
+		
 	}
 	
 	
@@ -148,7 +151,7 @@ public class WARCRecord implements WARCFormatDetails, WritableComparable {
 	public String toString() {
 	  
 		Iterator<Entry<String, String>> HeaderIterator = this.getHeaders().entrySet().iterator();
-		Iterator listIterator = this.getContentBlock().listIterator();
+		Iterator<String> listIterator = this.getContentBlock().listIterator();
 		StringBuffer b = new StringBuffer();
 		
 		b.append("\n");
@@ -171,11 +174,15 @@ public class WARCRecord implements WARCFormatDetails, WritableComparable {
 		return b.toString();
 	}
 
-
-	public int compareTo(Object o) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Boolean getBlank(){
+		return isBlank;
 	}
+	
+	public void setBlank(Boolean blank){
+		isBlank = blank;
+	}
+	
+	
 
 
 	

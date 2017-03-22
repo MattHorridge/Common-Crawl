@@ -1,15 +1,10 @@
 package warc;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.*;
 
 public interface WARCFormatDetails {
 	
-	
-	//Interface to help handle HTTP responses in WARC file
-	
-	
+
 	//Regex strings
 	final String REGEX_BLANK = "^\\s";
 	final String REGEX_RECORD_END = "Connection: close";
@@ -61,7 +56,7 @@ public interface WARCFormatDetails {
 		
 	//Array of all Header Fields in a WARC Record
 	public static final String[] HeaderFields = {
-			//"WARC-Type",
+			"WARC-Type",
 			"WARC-Date",
 			"WARC-Record-ID",
 			"Content-Length",

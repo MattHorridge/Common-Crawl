@@ -22,7 +22,7 @@
 		<configuration>
 		<archive>
 	<manifest>
-	<mainClass>awsAccess.S3AccessTestOne</mainClass>
+	<mainClass>mapreduce.MapReduceRunner</mainClass>
 	</manifest>
 	</archive>
 	</configuration>
@@ -30,13 +30,6 @@
       
     </plugins>
   </build>
-  
-  
-
-  
-  
-  
-  
   
   <dependencies>
   
