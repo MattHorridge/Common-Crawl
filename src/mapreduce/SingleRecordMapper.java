@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
@@ -34,16 +35,18 @@ import com.amazonaws.auth.BasicAWSCredentials;
  *
  */
 
-public class RecordMapper extends Mapper<Text, Text, Text, WARCRecord> {
+public class SingleRecordMapper extends Mapper<LongWritable, Text, Text, WARCRecord> {
 
 	private static final Log LOG = LogFactory.getLog(RecordMapper.class);
 	private static AWSCredentials creds;
 
 	
 	@Override
-	public void map(Text URL, Text SegmentName, Context context)  {
+	public void map(LongWritable line, Text SegmentName, Context context)  {
 	
 		Configuration config = context.getConfiguration();
+		
+		String targetURL = config.get("URL");
 		creds = null;
 		
 		try {
@@ -62,8 +65,8 @@ public class RecordMapper extends Mapper<Text, Text, Text, WARCRecord> {
 			
 			WARCRecordBuilder RBuilder = new WARCRecordBuilder(creds);
 
-			RBuilder.openStream(streamType.GZIP, RBuilder.getSegmentExtractor().extractSegment("aws-publicdatasets", SegmentName.toString()).getObjectContent());
-			WARCRecord Record = RBuilder.buildSingleRecord("response", RBuilder.getFilereader(), URL.toString());
+			RBuilder.openStream(streamType.GZIP, RBuilder.getSegmentExtractor().extractSegment("aws-publicdatasets", "common-crawl/" + SegmentName.toString()).getObjectContent());
+			WARCRecord Record = RBuilder.buildSingleRecord("response", RBuilder.getFilereader(), targetURL);
 			//output
 			
 			if (Record == null){
@@ -72,7 +75,7 @@ public class RecordMapper extends Mapper<Text, Text, Text, WARCRecord> {
 				return;
 			}
 		
-			context.write(URL, Record);
+			context.write(new Text(targetURL), Record);
 			LOG.info("mapper finished");
 		}
 		

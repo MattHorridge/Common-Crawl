@@ -51,7 +51,6 @@ public class s3Access {
 		AWSCredentials creds = null;
 		
 		try {
-		    //creds = new PropertiesCredentials(new File("resources/creds/credentials"));
 		    creds = new BasicAWSCredentials(key, value);
 		}
 		catch (Exception e){

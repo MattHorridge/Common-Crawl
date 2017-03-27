@@ -25,8 +25,6 @@ public interface WARCFormatDetails {
 	final Pattern REGEX_BLANK_PATTERN = Pattern.compile(REGEX_BLANK);
 	final Pattern WARC_URI_SPLIT_PATTERN = Pattern.compile(REGEX_URI_SPLIT);
 
-	
-	
 	//Header Fields
 	final String WARC_TYPE = "WARC-Type";
 	final String WARC_DATE = "WARC-Date";

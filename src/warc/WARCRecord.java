@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableComparable;
 
 
 public class WARCRecord implements WARCFormatDetails, Writable {
@@ -64,19 +63,15 @@ public class WARCRecord implements WARCFormatDetails, Writable {
 	}
 
 
-	/**
-	 * TODO: FIX THESE
-	 */
-	
-	
-	
+
 	public void readFields(DataInput input) throws IOException {
-		// TODO FINISH THIS
+		
 		
 		
 		//type = WARCType.valueOf(input.readUTF());
 		
 		k = input.readUTF();
+		
 		
 		
 		

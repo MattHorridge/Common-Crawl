@@ -5,12 +5,14 @@ package mapreduce;
 import warc.WARCRecord;
 import warc.WARCRecordBuilder;
 import warc.WARCRecordBuilder.streamType;
+import mapreduceio.WARCRecordArrayWritable;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -54,21 +56,27 @@ public class MapReduceRunner {
 		conf.set("mapreduce.jobtracker.address", "local");
 		conf.set("inputKey", args[3]);
 		conf.set("inputSecret", args[4]);
+		conf.set("URL", "http://6dollarshirts.com");
 
 		
 		Job job = Job.getInstance(conf, "CommonCrawlKnowsItAll");
 		
-		job.setInputFormatClass(KeyValueTextInputFormat.class);
-	    job.setMapperClass(RecordMapper.class);
+		//job.setInputFormatClass(KeyValueTextInputFormat.class);
+		
+		
+		job.setInputFormatClass(TextInputFormat.class);
+		job.setOutputFormatClass(TextOutputFormat.class);
+		
+	    job.setMapperClass(ListRecordMapper.class);
 	   
 	    
 	    job.setMapOutputKeyClass(Text.class);
-	    job.setMapOutputValueClass(WARCRecord.class);
+	    job.setMapOutputValueClass(WARCRecordArrayWritable.class);
 	   
 	
-	    job.setReducerClass(RecordReducer.class);
+	    job.setReducerClass(ListRecordReducer.class);
 	    
-	    //job.setNumReduceTasks(0);
+	   
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(WARCRecord.class);
 		job.setJarByClass(MapReduceRunner.class);

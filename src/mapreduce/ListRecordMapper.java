@@ -1,9 +1,12 @@
 package mapreduce;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+
+
+
+import mapreduceio.WARCRecordArrayWritable;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
@@ -18,33 +21,28 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 
-/*
- * TODO: Refactor name etc
- * 
- * 
- */
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Mapper class for MR project
- * Input will be Segment Address & URL name
- * Output <URL, WARCRecord>
- * @author matthorridge
- * @param <V>
- * @param <K>
- *
- */
 
-public class RecordMapper extends Mapper<Text, Text, Text, WARCRecord> {
 
-	private static final Log LOG = LogFactory.getLog(RecordMapper.class);
+public class ListRecordMapper extends Mapper<LongWritable, Text, Text, WARCRecordArrayWritable> {
+
+	private static final Log LOG = LogFactory.getLog(ListRecordMapper.class);
 	private static AWSCredentials creds;
-
+	//private List<WARCRecord> RecordList;
+	private WARCRecord[] RecordList;
 	
 	@Override
-	public void map(Text URL, Text SegmentName, Context context)  {
-	
+	public void map(LongWritable line, Text SegmentName, Context context){
+		
 		Configuration config = context.getConfiguration();
+		
+		String targetURL = config.get("URL");
 		creds = null;
+		
 		
 		try {
 			creds = new BasicAWSCredentials(config.get("inputKey"), config.get("inputSecret"));
@@ -56,23 +54,28 @@ public class RecordMapper extends Mapper<Text, Text, Text, WARCRecord> {
 		}
 		
 		
-	
-		LOG.info("Try to map");
+		LOG.info("Trying to List Map");
+		
 		try{
 			
 			WARCRecordBuilder RBuilder = new WARCRecordBuilder(creds);
-
-			RBuilder.openStream(streamType.GZIP, RBuilder.getSegmentExtractor().extractSegment("aws-publicdatasets", SegmentName.toString()).getObjectContent());
-			WARCRecord Record = RBuilder.buildSingleRecord("response", RBuilder.getFilereader(), URL.toString());
+			RBuilder.openStream(streamType.GZIP, RBuilder.getSegmentExtractor().extractSegment("aws-publicdatasets", "common-crawl/" + SegmentName.toString()).getObjectContent());
+			RecordList =  RBuilder.buildRecordsArray("response", RBuilder.getFilereader(), targetURL);
 			//output
 			
-			if (Record == null){
+			if (RecordList == null){
 				LOG.info("mapper finished");
 				LOG.info("Desired URL Not Found");
 				return;
 			}
 		
-			context.write(URL, Record);
+			
+			
+			
+			
+			context.write(new Text(targetURL), new WARCRecordArrayWritable(RecordList));
+			
+			//RecordList.clear();
 			LOG.info("mapper finished");
 		}
 		
@@ -88,7 +91,11 @@ public class RecordMapper extends Mapper<Text, Text, Text, WARCRecord> {
 			System.out.println(errors.toString());
 			
 		}
+		
+		
 	}
-
-
+	
+	
+	
+	
 }

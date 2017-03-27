@@ -18,6 +18,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
+
+
+
+import mapreduceio.WARCRecordArrayWritable;
+
 import com.amazonaws.auth.AWSCredentials;
 
 import awstools.SegmentExtractor;
@@ -96,102 +101,213 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 	 * And produce a WARC record Object
 	 * 
 	 */
+
 	
-	public WARCRecord buildRecord(String type, BufferedReader reader, String target) throws Exception{
-		
+	public WARCRecord buildSingleRecord(String type, BufferedReader reader, String target) throws IOException{
+	
 		
 		String currentLine;
-		String nextLine;
 		String TypeString = WARC_TYPE + ": " + type;
 		
+		WARCTypePattern = Pattern.compile(TypeString); //This is the start of the desired record 		
 		
-		WARCTypePattern = Pattern.compile(TypeString); //This is the start of the desired record 
+		while((currentLine = reader.readLine())!= null){
+			TypeMatch = WARCTypePattern.matcher(currentLine);
 		
-		//create Record Object
-		WARCRecord Record = new WARCRecord();
 		
-		//create map
-		Map<String, String> Headers = new HashMap<String,String>();
-		List<String> contentBlock = new ArrayList<String>();
-	
-		try{
-			while((currentLine = reader.readLine())!= null){
-				TypeMatch = WARCTypePattern.matcher(currentLine);
+			if(TypeMatch.find()){
 				
-				//If there is a WARC Record of type required
-				if(TypeMatch.find()){
+				reader.mark(2000);
 				
-					int lineBreakCount = 0;
-		
-
-					while(!(nextLine = reader.readLine()).equals("Connection: close")){
-							
-							//System.out.println(nextLine);
-							Matcher PatternMatcher = WARC_RECORD_START_PATTERN.matcher(nextLine);
-							Matcher contentTypeMatcher = WARC_CONTENT_TYPE_PATTERN.matcher(nextLine);
-							Matcher CLengthMatcher = WARC_CONTENT_LENGTH_PATTERN.matcher(nextLine);
-							Matcher URLsplitMatcher = WARC_URI_SPLIT_PATTERN.matcher(nextLine);
-							
-						
-							if(lineBreakCount >= 2){
-								lineBreakCount = 0;
-								break;
-							}
-							
-							if(URLsplitMatcher.find()){
-								//System.out.println(nextLine);
-								if(URLsplitMatcher.group(2).toLowerCase().contains(target)){
-								System.out.println("FOUND IT");
-								System.out.println(nextLine);
-								Headers.put(URLsplitMatcher.group(1), URLsplitMatcher.group(2));
+				WARCRecord r = this.extractRecord(reader, target);
 				
-								}
-								else
-									break;	
-							}
-							
-							
-							if(nextLine.trim().isEmpty()){
-								lineBreakCount++;
-							}
-							
-							
-							else if (PatternMatcher.find()){
-								Headers.put(PatternMatcher.group(1), PatternMatcher.group(2));	
-								//System.out.println(PatternMatcher.group(1).toString() + " " + PatternMatcher.group(2).toString());
-							}
-							else if (contentTypeMatcher.find()){
-								Headers.put(contentTypeMatcher.group(1), contentTypeMatcher.group(2));;
-								//System.out.println(contentTypeMatcher.group(1).toString() + " " + contentTypeMatcher.group(2).toString());
-							}
-							else if (CLengthMatcher.find()){
-								Headers.put(CLengthMatcher.group(1), CLengthMatcher.group(2));
-								//System.out.println(CLengthMatcher.group(1).toString() + " " + CLengthMatcher.group(2).toString());
-							}
-									
-						
-							else 
-							{
-								contentBlock.add(nextLine);
-							}	
-					}	
+				if (r != null){
+					
+					reader.reset();
+					return r;
+					
 				}
-			}
-		}
-		catch(Exception e){}
-		
-		Record.setHeaders(Headers);
-		Record.setContentBlock(contentBlock);
-		
-		
-		if (contentBlock.size() == 0){
+				else 
+					reader.reset();
+					continue;
 			
-			//No record was found
-			return null;
+			}
+			else
+				continue;
+			
 		}
-		return Record;
+	
+		return null;
 	}
 	
+	
+	public List<WARCRecord> buildRecords(String type, BufferedReader reader, String target) throws IOException{
+		
+		String currentLine;
+		String TypeString = WARC_TYPE + ": " + type;
+		List<WARCRecord> wList = new ArrayList<WARCRecord>();
+		
+		WARCTypePattern = Pattern.compile(TypeString); //This is the start of the desired record 		
+		
+		while((currentLine = reader.readLine())!= null){
+			TypeMatch = WARCTypePattern.matcher(currentLine);
+		
+		
+			if(TypeMatch.find()){
+				
+				//System.out.println(currentLine);
+				reader.mark(2000);
+				
+				WARCRecord r = this.extractRecord(reader, target);
+				
+				if (r != null){
+					
+					reader.reset();
+					wList.add(r);
+					
+				}
+				else 
+					reader.reset();
+					continue;
+			
+			}
+			else
+				continue;
+			
+		}
+	
+		return wList;
+	}
+
+	
+	public WARCRecord[] buildRecordsArray(String type, BufferedReader reader, String target) throws IOException{
+		
+		String currentLine;
+		String TypeString = WARC_TYPE + ": " + type;
+		List<WARCRecord> wList = new ArrayList<WARCRecord>();
+		
+		WARCTypePattern = Pattern.compile(TypeString); //This is the start of the desired record 		
+		
+		while((currentLine = reader.readLine())!= null){
+			TypeMatch = WARCTypePattern.matcher(currentLine);
+		
+		
+			if(TypeMatch.find()){
+				
+				//System.out.println(currentLine);
+				reader.mark(2000);
+				
+				WARCRecord r = this.extractRecord(reader, target);
+				
+				if (r != null){
+					
+					reader.reset();
+					wList.add(r);
+					
+				}
+				else 
+					reader.reset();
+					continue;
+			
+			}
+			else
+				continue;
+			
+		}
+		reader.close();
+		return wList.toArray(new WARCRecord[wList.size()]);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private WARCRecord extractRecord(BufferedReader reader, String target) throws IOException{
+		
+
+		String nextLine;
+		int breaks = 0;
+
+		Map<String, String> Headers = new HashMap<String,String>();
+		List<String> contentBlock = new ArrayList<String>();
+		WARCRecord record = new WARCRecord();
+		
+		while((nextLine = reader.readLine())!= "End Of Records"){
+			
+			Matcher PatternMatcher = WARC_RECORD_START_PATTERN.matcher(nextLine);
+			Matcher contentTypeMatcher = WARC_CONTENT_TYPE_PATTERN.matcher(nextLine);
+			Matcher CLengthMatcher = WARC_CONTENT_LENGTH_PATTERN.matcher(nextLine);
+			Matcher URLsplitMatcher = WARC_URI_SPLIT_PATTERN.matcher(nextLine);
+			
+			if(breaks > 1)
+			{
+				breaks = 0;
+				break;
+				
+			}
+			
+			if (nextLine.trim().equals("")){
+				breaks++;
+			}
+			
+
+			if(URLsplitMatcher.find()){
+				//System.out.println(nextLine);
+				if(URLsplitMatcher.group(2).toLowerCase().contains(target)){
+				System.out.println("FOUND IT");
+				System.out.println(nextLine);
+				Headers.put(URLsplitMatcher.group(1), URLsplitMatcher.group(2));
+
+				}
+				else
+					{
+						//System.out.println("readOn returning null");
+						return null;
+					}	
+			}
+			
+			else if (PatternMatcher.find()){
+				Headers.put(PatternMatcher.group(1), PatternMatcher.group(2));	
+				//System.out.println(PatternMatcher.group(1).toString() + " " + PatternMatcher.group(2).toString());
+			}
+			else if (contentTypeMatcher.find()){
+				Headers.put(contentTypeMatcher.group(1), contentTypeMatcher.group(2));;
+				//System.out.println(contentTypeMatcher.group(1).toString() + " " + contentTypeMatcher.group(2).toString());
+			}
+			else if (CLengthMatcher.find()){
+				Headers.put(CLengthMatcher.group(1), CLengthMatcher.group(2));
+				//System.out.println(CLengthMatcher.group(1).toString() + " " + CLengthMatcher.group(2).toString());
+			}
+			
+			else
+			{
+				//System.out.println(nextLine);
+				contentBlock.add(nextLine);
+			}
+			
+		}
+		
+		record.setHeaders(Headers);
+		record.setContentBlock(contentBlock);
+
+		
+		return record;
+	}
+
 	
 	public BufferedReader getFilereader() {
 		return filereader;
@@ -225,7 +341,7 @@ public class WARCRecordBuilder implements WARCFormatDetails{
 		creds = credentials;
 	}
 	
-	public AWSCredentials getCreds(){
+	private AWSCredentials getCreds(){
 		return creds;
 	}
 

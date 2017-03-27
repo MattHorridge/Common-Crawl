@@ -26,7 +26,7 @@ public class SegmentExtractor {
 	private String User;
 	private s3Access pipeLine;
 	private String encoding;
-	private AWSCredentials creds;
+
 	
 	
 	/**
