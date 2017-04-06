@@ -1,4 +1,7 @@
-package awstools;
+package main.awstools;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
@@ -19,15 +22,12 @@ import com.amazonaws.services.s3.AmazonS3Client;
  */
 
 public class s3Access {
-	
 
-	
 	private final AmazonS3 s3;
-	
+	private static final Log LOG = LogFactory.getLog(s3Access.class);
 	
 	
 	public s3Access(AWSCredentials creds){
-		//credSetup("AKIAJL45LAS6LGGHQESQ", "xDsZNHswz+ZMap5Y3o2+acDiI8ZeP7aW3TNtToE6")
 		s3 = new AmazonS3Client(creds);
 		Region s3Region = Region.getRegion(Regions.US_EAST_1); //Default Region US_EAST_1
 		s3.setRegion(s3Region);
@@ -53,11 +53,12 @@ public class s3Access {
 		try {
 		    creds = new BasicAWSCredentials(key, value);
 		}
-		catch (Exception e){
-			throw new AmazonClientException(
-					"Credentials were not correctly entered - provide your correct credentails in the "
-					+ "specfied format",
-		                    e);
+		catch (AmazonClientException ac){
+			
+			
+			LOG.info("Amazon Client Exception - Correct Credentials not correctly entered or were wrong");
+			LOG.info(ac.getCause());
+			LOG.info(ac.getMessage());
 		}
 		
 		return creds;

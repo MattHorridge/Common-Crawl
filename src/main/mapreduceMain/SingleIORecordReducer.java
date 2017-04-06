@@ -1,18 +1,19 @@
-package mapreduce;
+package main.mapreduceMain;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import main.warc.WARCRecord;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-
-import warc.WARCRecord;
-
-public class RecordReducer extends Reducer<Text, WARCRecord, Text, Text>{
+public class SingleIORecordReducer extends Reducer<Text, WARCRecord, Text, Text>{
 	
-	private static final Log LOG = LogFactory.getLog(RecordReducer.class);
+	private static final Log LOG = LogFactory.getLog(SingleIORecordReducer.class);
 
 	private Text outputkey;
 	private Text outputvalue;
@@ -44,8 +45,19 @@ public class RecordReducer extends Reducer<Text, WARCRecord, Text, Text>{
 		context.write(outputkey, outputvalue);
 		System.out.println("Reducer Complete");
 		}
+		
+		catch (InterruptedException e){
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			LOG.info("Interrupted Exception");
+			LOG.info(errors);
+		}
+		
 		catch (Exception e){
-			
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			LOG.info("Interrupted Exception");
+			LOG.info(errors);
 		}
 	}
 

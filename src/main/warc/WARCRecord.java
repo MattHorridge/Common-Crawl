@@ -1,9 +1,8 @@
-package warc;
+package main.warc;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,38 +15,28 @@ import org.apache.hadoop.io.Writable;
 
 public class WARCRecord implements WARCFormatDetails, Writable {
 	
-
-	protected WARCType type;
-	protected String warcTypeString;
 	protected List<String> ContentBlock; //To hold unordered HTTP header information
 	protected Map<String, String> Headers;
-	protected Boolean isBlank;
-	private String k;
-	
-	
+	protected String recordType;
+	protected String URL;
 	/*
 	 * Blank Constructor
 	 */
 	public WARCRecord(){
-		
-		isBlank = false;
-	}
 	
-
-	public WARCType getType() {
-		return type;
 	}
-
-
-	public void setType(WARCType type) {
-		this.type = type;
-	}
-
 
 	public Map<String, String> getHeaders() {
 		return Headers;
 	}
+	
+	public void setURL(String url){
+		URL = url;
+	}
 
+	public String getURL(){
+		return URL;
+	}
 
 	public void setHeaders(Map<String, String> headers) {
 		Headers = headers;
@@ -62,34 +51,28 @@ public class WARCRecord implements WARCFormatDetails, Writable {
 		return ContentBlock;
 	}
 
+	public String getType(){
+		return recordType;
+	}
+	
+	public void setType(String type){
+		recordType = type;
+	}
 
 
 	public void readFields(DataInput input) throws IOException {
-		
-		
-		
-		//type = WARCType.valueOf(input.readUTF());
-		
-		k = input.readUTF();
-		
-		
-		
-		
+			
+		recordType = input.readUTF();
 		int numofdata = input.readInt();
-		
-		//System.out.println(numofdata);
+		URL = input.readUTF();
 		
 		Map<String, String> newHeader = new HashMap<String,String>();
 		ArrayList<String> newCBlock = new ArrayList<String>();
 		
 		//simple loop that sets key value of Header map correctly
 		for (int i = 0; i < numofdata; i++){
-			
 			String key = input.readUTF().toString();
-			//System.out.println(key);
 			String value = input.readUTF().toString();
-			//System.out.println(value);
-			//Headers.put(key, value);
 			newHeader.put(key,value);
 		}
 		this.setHeaders(newHeader);
@@ -101,10 +84,6 @@ public class WARCRecord implements WARCFormatDetails, Writable {
 		}
 		
 		this.setContentBlock(newCBlock);
-		
-		//System.out.println(this);
-		
-		this.setBlank(input.readBoolean());
 	}
 
 
@@ -117,11 +96,9 @@ public class WARCRecord implements WARCFormatDetails, Writable {
 		Iterator<Entry<String, String>> HeaderIterator = Headers.entrySet().iterator();
 		
 		
-		output.writeUTF("response");//type\
-		
-		System.out.println("WRITING===========================");
-		
+		output.writeUTF(recordType);//type\
 		output.writeInt(Headers.size());
+		output.writeUTF(URL);
 		
 		while (HeaderIterator.hasNext()) {
 	        Entry<String, String> thisEntry = HeaderIterator.next();
@@ -136,9 +113,7 @@ public class WARCRecord implements WARCFormatDetails, Writable {
 			Object e = ListIterator.next();
 			output.writeUTF(e.toString());
 		}
-		
-		output.writeBoolean(this.getBlank());
-		
+
 	}
 	
 	
@@ -150,7 +125,7 @@ public class WARCRecord implements WARCFormatDetails, Writable {
 		StringBuffer b = new StringBuffer();
 		
 		b.append("\n");
-
+		b.append(this.getType());
 		
 		while (HeaderIterator.hasNext()) {
 	        Entry<String, String> thisEntry = HeaderIterator.next();
@@ -168,24 +143,4 @@ public class WARCRecord implements WARCFormatDetails, Writable {
 		
 		return b.toString();
 	}
-
-	public Boolean getBlank(){
-		return isBlank;
-	}
-	
-	public void setBlank(Boolean blank){
-		isBlank = blank;
-	}
-	
-	
-
-
-	
-
-	
-	
-	
-	
-	
-
 }

@@ -1,0 +1,14 @@
+package test.mapreducetest;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class SingleRecordMapperTest {
+
+	@Test
+	public void test() {
+		fail("Not yet implemented");
+	}
+
+}

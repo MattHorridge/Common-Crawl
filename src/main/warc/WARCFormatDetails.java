@@ -1,4 +1,4 @@
-package warc;
+package main.warc;
 
 import java.util.regex.*;
 
@@ -49,8 +49,15 @@ public interface WARCFormatDetails {
 		request,
 		response,
 		metadata
-	
 	}
+	
+	public static final String[] StringWARCType = {
+		"warcinfo",
+		"request",
+		"response",
+		"metadata"
+	};
+	
 		
 	//Array of all Header Fields in a WARC Record
 	public static final String[] HeaderFields = {

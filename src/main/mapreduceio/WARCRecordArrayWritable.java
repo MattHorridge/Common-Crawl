@@ -1,9 +1,9 @@
-package mapreduceio;
+package main.mapreduceio;
+
+import main.warc.WARCRecord;
 
 import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.Writable;
-
-import warc.WARCRecord;
 
 public class WARCRecordArrayWritable extends ArrayWritable{
 
@@ -19,7 +19,6 @@ public class WARCRecordArrayWritable extends ArrayWritable{
 	
 	@Override
     public Writable[] get() {
-	
         return super.get();
     }
 

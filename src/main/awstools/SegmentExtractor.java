@@ -1,7 +1,11 @@
-package awstools;
+package main.awstools;
 
 
 import java.io.InputStream;
+
+
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -21,13 +25,10 @@ import com.amazonaws.services.s3.model.S3Object;
 
 public class SegmentExtractor {
 
-	private String key; //s3 public segment key
-	private String bucket;	
-	private String User;
+	private String key, bucket; //s3 public segment key
 	private s3Access pipeLine;
 	private String encoding;
-
-	
+	private static final Log LOG = LogFactory.getLog(SegmentExtractor.class);
 	
 	/**
 	 * Blank Constructor
@@ -57,14 +58,20 @@ public class SegmentExtractor {
 		catch (AmazonServiceException as){
 			
 			 	System.out.println("Error Message:    " + as.getMessage());
+			 	LOG.info(as.getMessage());
 	            System.out.println("HTTP Status Code: " + as.getStatusCode());
+	            LOG.info(as.getStatusCode());
 	            System.out.println("AWS Error Code:   " + as.getErrorCode());
+	            LOG.info(as.getErrorCode());
 	            System.out.println("Error Type:       " + as.getErrorType());
+	            LOG.info(as.getErrorType());
 	            System.out.println("Request ID:       " + as.getRequestId());
+	            LOG.info(as.getRequestId());
 		}
 		catch (AmazonClientException ac) {
         
 				System.out.println("Error: " + ac.getMessage());
+				LOG.info(ac.getMessage());
 		}
 		
 		return null;
@@ -102,6 +109,10 @@ public class SegmentExtractor {
 	
 	public String getEncoding(){
 		return encoding;
+	}
+	
+	public void setPipeline(s3Access As3){
+		pipeLine = As3;
 	}
 
 }

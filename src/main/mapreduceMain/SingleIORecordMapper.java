@@ -1,17 +1,18 @@
-package mapreduce;
+package main.mapreduceMain;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import main.warc.WARCRecord;
+import main.warc.WARCRecordBuilder;
+import main.warc.WARCRecordBuilder.streamType;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-
-import warc.WARCRecord;
-import warc.WARCRecordBuilder;
-import warc.WARCRecordBuilder.streamType;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,9 +36,9 @@ import com.amazonaws.auth.BasicAWSCredentials;
  *
  */
 
-public class SingleRecordMapper extends Mapper<LongWritable, Text, Text, WARCRecord> {
+public class SingleIORecordMapper extends Mapper<LongWritable, Text, Text, WARCRecord> {
 
-	private static final Log LOG = LogFactory.getLog(RecordMapper.class);
+	private static final Log LOG = LogFactory.getLog(SingleIORecordMapper.class);
 	private static AWSCredentials creds;
 
 	
@@ -45,15 +46,15 @@ public class SingleRecordMapper extends Mapper<LongWritable, Text, Text, WARCRec
 	public void map(LongWritable line, Text SegmentName, Context context)  {
 	
 		Configuration config = context.getConfiguration();
-		
 		String targetURL = config.get("URL");
 		creds = null;
 		
 		try {
 			creds = new BasicAWSCredentials(config.get("inputKey"), config.get("inputSecret"));
 		}
-		catch(Exception e){ 
-			throw new AmazonClientException("Credentials were not correctly entered - provide your correct credentails in the "
+		catch(AmazonClientException e){ 
+			
+			throw new AmazonClientException("Credentials were not correctly entered or were wrong - provide your correct credentails in the "
 					+ "specfied format",
 		                    e);
 		}
@@ -65,8 +66,9 @@ public class SingleRecordMapper extends Mapper<LongWritable, Text, Text, WARCRec
 			
 			WARCRecordBuilder RBuilder = new WARCRecordBuilder(creds);
 
-			RBuilder.openStream(streamType.GZIP, RBuilder.getSegmentExtractor().extractSegment("aws-publicdatasets", "common-crawl/" + SegmentName.toString()).getObjectContent());
+			RBuilder.openStream(streamType.GZIP, RBuilder.getSegmentExtractor().extractSegment("commoncrawl", SegmentName.toString()).getObjectContent());
 			WARCRecord Record = RBuilder.buildSingleRecord("response", RBuilder.getFilereader(), targetURL);
+			RBuilder.closeStream();
 			//output
 			
 			if (Record == null){
@@ -78,18 +80,23 @@ public class SingleRecordMapper extends Mapper<LongWritable, Text, Text, WARCRec
 			context.write(new Text(targetURL), Record);
 			LOG.info("mapper finished");
 		}
-		
-		catch(Exception e){
-			
-			//Some debugging
-			LOG.info(e);
-			
-			System.out.println(e.getStackTrace().toString());
-			
+		catch(FileNotFoundException f){
+			StringWriter errors = new StringWriter();
+			f.printStackTrace(new PrintWriter(errors));
+			LOG.info("IO Exception");
+			LOG.info(errors);
+		}
+		catch(IOException e){
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
-			System.out.println(errors.toString());
-			
+			LOG.info("IO Exception");
+			LOG.info(errors);	
+		}
+		catch(InterruptedException i){
+			StringWriter errors = new StringWriter();
+			i.printStackTrace(new PrintWriter(errors));
+			LOG.info("Interrupted Exception");
+			LOG.info(errors);	
 		}
 	}
 
