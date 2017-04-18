@@ -22,9 +22,9 @@ import java.io.StringWriter;
 
 
 
-public class ListRecordMapper extends Mapper<LongWritable, Text, Text, WARCRecordArrayWritable> {
+public class SingleURLRecordMapper extends Mapper<LongWritable, Text, Text, WARCRecordArrayWritable> {
 
-	private static final Log LOG = LogFactory.getLog(ListRecordMapper.class);
+	private static final Log LOG = LogFactory.getLog(SingleURLRecordMapper.class);
 	private static AWSCredentials creds;
 	private WARCRecord[] RecordList;
 	private static String targetURL;

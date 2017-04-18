@@ -9,7 +9,6 @@ public class WARCRecordArrayWritable extends ArrayWritable{
 
 	public WARCRecordArrayWritable(WARCRecord[] values) {
 		super(WARCRecord.class, values);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public WARCRecordArrayWritable(){

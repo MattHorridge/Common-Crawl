@@ -74,6 +74,7 @@ public class WARCRecordTest implements WARCFormatDetails{
 	    DataOutput dataOut = new DataOutputStream(byteStreamOut);
 	   
 	    String type = "type:Test";
+	    String url = "test.com";
 		Map<String,String> testHeaders = new HashMap<String,String>();
 		List<String> testCBlock = new ArrayList<String>();
 		testHeaders.put("TestKeyA", "TestValueA");
@@ -81,6 +82,7 @@ public class WARCRecordTest implements WARCFormatDetails{
 		testRecordWritableOut.setContentBlock(testCBlock);
 		testRecordWritableOut.setHeaders(testHeaders);
 		testRecordWritableOut.setType(type);
+		testRecordWritableOut.setURL(url);
 		testRecordWritableOut.write(dataOut);
 		
 		ByteArrayInputStream byteStreamIn = new ByteArrayInputStream(byteStreamOut.toByteArray());

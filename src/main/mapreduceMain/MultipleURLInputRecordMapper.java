@@ -54,7 +54,6 @@ public class MultipleURLInputRecordMapper extends Mapper<LongWritable, Text, Tex
 		LOG.info("Trying to Map");
 		WARCRecordBuilder RBuilder = new WARCRecordBuilder(creds);
 		
-		
 		try{
 				RBuilder.openStream(streamType.GZIP, RBuilder.getSegmentExtractor().extractSegment("commoncrawl", SegmentName.toString()).getObjectContent());
 				WARCRecord Records[] = RBuilder.buildRecordsArray("response", RBuilder.getFilereader(), targets);

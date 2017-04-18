@@ -13,8 +13,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.s3.model.S3Object;
 
 
-//Class for the extraction of gzipped WARC files
-
 /**
  * Class to extract a specified segment from s3
  * Replaces S3DataStream

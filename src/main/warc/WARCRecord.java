@@ -4,16 +4,19 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 
 
-public class WARCRecord implements WARCFormatDetails, Writable {
+public class WARCRecord implements WARCFormatDetails, WritableComparable<WARCRecord> {
 	
 	protected List<String> ContentBlock; //To hold unordered HTTP header information
 	protected Map<String, String> Headers;
@@ -143,4 +146,29 @@ public class WARCRecord implements WARCFormatDetails, Writable {
 		
 		return b.toString();
 	}
+
+	
+
+	@Override
+	public int compareTo(WARCRecord o) {
+		int thisClength = this.getContentBlock().size();
+		int CompareClength = o.getContentBlock().size();
+		
+		
+		
+		if (thisClength != CompareClength)
+			return 1;
+		else{
+			Set<String> thisSet = new HashSet<String>(this.getContentBlock());
+			Set<String> compareSet = new HashSet<String>(o.getContentBlock());
+			thisSet.retainAll(compareSet);
+			
+			return (thisSet.size() <= (thisClength - 3) ? 1 : 0 );
+		}
+	
+
+	}
+
+
+
 }

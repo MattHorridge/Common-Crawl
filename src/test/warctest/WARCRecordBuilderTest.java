@@ -85,6 +85,8 @@ public class WARCRecordBuilderTest implements RecordTestDetails {
 			
 			testRecord.setContentBlock(contentBlock);
 			testRecord.setHeaders(headers);
+			testRecord.setURL(TARGET);
+			testRecord.setType("response");
 			testBuilder = new WARCRecordBuilder(testfile);
 
 			WARCRecord builtRecord = testBuilder.buildSingleRecord("response", testBuilder.getFilereader(), TARGET);

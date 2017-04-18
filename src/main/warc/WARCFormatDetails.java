@@ -78,6 +78,12 @@ public interface WARCFormatDetails {
 			"WARC-Identified-Payload-Type"
 			
 	};
+
+
+	
+
+
+	
 	
 	
 	

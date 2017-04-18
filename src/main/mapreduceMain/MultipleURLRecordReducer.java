@@ -11,9 +11,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class SingleIORecordReducer extends Reducer<Text, WARCRecord, Text, Text>{
+public class MultipleURLRecordReducer extends Reducer<Text, WARCRecord, Text, Text>{
 	
-	private static final Log LOG = LogFactory.getLog(SingleIORecordReducer.class);
+	private static final Log LOG = LogFactory.getLog(MultipleURLRecordReducer.class);
 
 	private Text outputkey;
 	private Text outputvalue;
@@ -24,18 +24,20 @@ public class SingleIORecordReducer extends Reducer<Text, WARCRecord, Text, Text>
 	public void reduce(Text key, Iterable<WARCRecord> values, 
 			Context context) throws IOException, InterruptedException{
 		
-		System.out.println("Inside Reducer");
+		LOG.info("Inside Reducer");
 		
 		buffer = new StringBuffer();
 		AppendOutputKey = "TARGET URL: " + key.toString();
 		
+		WARCRecord Comparator = values.iterator().next();
+		buffer.append(Comparator.toString());
 		try{
 			for (WARCRecord val : values){
-				
-				buffer.append("\n");
-				buffer.append(val.toString());
-				buffer.append("\n");
-			
+				if (Comparator.compareTo(val) == 1){//If its not the same header
+					buffer.append("\n");
+					buffer.append(val.toString());
+					buffer.append("\n");
+				}
 			}
 		
 		buffer.append("\n");
@@ -43,7 +45,6 @@ public class SingleIORecordReducer extends Reducer<Text, WARCRecord, Text, Text>
 		outputvalue = new Text(buffer.toString());
 		outputkey = new Text(AppendOutputKey);
 		context.write(outputkey, outputvalue);
-		System.out.println("Reducer Complete");
 		}
 		
 		catch (InterruptedException e){

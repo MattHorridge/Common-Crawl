@@ -12,12 +12,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 
-public class ListRecordReducer extends Reducer<Text, WARCRecordArrayWritable, Text, Text>  {
+public class SingleURLRecordReducer extends Reducer<Text, WARCRecordArrayWritable, Text, Text>  {
 
 	private Text outputkey, outputvalue;
 	private StringBuffer buffer;
 	private String AppendOutputKey;
-	private static final Log LOG = LogFactory.getLog(ListRecordReducer.class);
+	private static final Log LOG = LogFactory.getLog(SingleURLRecordReducer.class);
 	
 	@Override
 	public void reduce(Text key, Iterable<WARCRecordArrayWritable> values, 
@@ -26,7 +26,7 @@ public class ListRecordReducer extends Reducer<Text, WARCRecordArrayWritable, Te
 		LOG.info("Trying to List Reduce");;
 		
 		buffer = new StringBuffer();
-		AppendOutputKey = "TARGET URL: " + key.toString();
+		AppendOutputKey = key.toString();
 	
 		try{
 			for (WARCRecordArrayWritable val : values){
